@@ -1,12 +1,8 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import HomePage from './src/pages/HomePage';
 
 const App = () => {
-  return (
-    <View>
-      <Text>App</Text>
-    </View>
-  );
+  return <HomePage />;
 };
 
 export default App;
