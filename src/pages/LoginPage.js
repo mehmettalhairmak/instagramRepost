@@ -8,7 +8,7 @@ import {
   REDIRECT_URL,
 } from '../constants/instagram';
 
-const HomePage = () => {
+const LoginPage = () => {
   const insRef = useRef();
   const [currentUser, setCurrentUser] = useState(null);
 
@@ -60,4 +60,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default HomePage;
+export default LoginPage;
