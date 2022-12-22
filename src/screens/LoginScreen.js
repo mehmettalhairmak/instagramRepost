@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
 import CookieManager from '@react-native-cookies/cookies';
@@ -7,10 +7,18 @@ import {
   INSTAGRAM_APP_SECRET,
   REDIRECT_URL,
 } from '../constants/instagram';
+import { useNavigation } from '@react-navigation/native';
 
-const LoginPage = () => {
+const LoginScreen = () => {
   const insRef = useRef();
   const [currentUser, setCurrentUser] = useState(null);
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    if (currentUser != null) {
+      navigation.navigate('HomeScreen', { item: currentUser });
+    }
+  }, [currentUser]);
 
   const onClear = () => {
     CookieManager.clearAll(true).then(res => {
@@ -60,4 +68,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginPage;
+export default LoginScreen;
