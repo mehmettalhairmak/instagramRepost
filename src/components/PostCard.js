@@ -1,9 +1,39 @@
-import React from 'react';
-import { Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import React, { useState } from 'react';
+import {
+  FlatList,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 
 const PostCard = () => {
+  const [contentImageWidth, setContentImageWidth] = useState(0);
+
+  const contentImages = [
+    {
+      source:
+        'https://fotolifeakademi.com/uploads/2020/04/manzara-fotografi-cekmek-724x394.webp',
+      key: 1,
+    },
+    {
+      source:
+        'https://www.arthenos.com/wp-content/uploads/2017/08/Manzara_fotografciligi_2.jpg',
+      key: 2,
+    },
+    {
+      source:
+        'https://mediatrend.mediamarkt.com.tr/wp-content/uploads/2017/02/2017_subat_03.jpg',
+      key: 3,
+    },
+  ];
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -33,17 +63,21 @@ const PostCard = () => {
       </View>
       {/* Content */}
       <View style={styles.content}>
-        <Image
-          style={{
-            width: '100%',
-            height: '100%',
-            borderWidth: 1,
-            borderColor: 'blue',
-          }}
-          resizeMode={'cover'}
-          source={{
-            uri: 'https://cdn.pixabay.com/photo/2014/09/17/20/03/profile-449912__340.jpg',
-          }}
+        <FlatList
+          data={contentImages}
+          horizontal
+          pagingEnabled
+          showsHorizontalScrollIndicator={false}
+          onLayout={e => setContentImageWidth(e.nativeEvent.layout.width)}
+          renderItem={({ item }) => (
+            <View style={{ width: contentImageWidth }}>
+              <Image
+                source={{ uri: item.source }}
+                style={{ flex: 1 }}
+                resizeMode="contain"
+              />
+            </View>
+          )}
         />
       </View>
       {/* Footer */}
@@ -108,6 +142,9 @@ const styles = StyleSheet.create({
     marginRight: hp(1),
   },
   content: {
+    //flex: 1,
+    //width: '95%',
+    //borderWidth: 1,
     height: hp(40),
     marginHorizontal: hp(1.4),
   },

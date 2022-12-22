@@ -28,8 +28,6 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingHorizontal: hp(2),
     paddingVertical: hp(12),
-    borderWidth: 1,
-    borderColor: 'red',
   },
 });
 
