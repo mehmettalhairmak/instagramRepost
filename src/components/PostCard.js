@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -7,30 +7,51 @@ import {
   Text,
   View,
 } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
+import Video from 'react-native-video';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 const PostCard = () => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
+  const [contentVideoPause, setContentVideoPause] = useState(false);
+  const [contentVideoMuted, setContentVideoMuted] = useState(false);
+
+  const onViewableItemsChanged = ({ viewableItems }) => {
+    // Do stuff
+    console.log(viewableItems[0].item.uri);
+    contentImages.map((item, index) => {
+      console.log(item);
+      viewableItems[0].item.uri == item.uri
+        ? setContentVideoPause(false)
+        : setContentVideoPause(true);
+    });
+  };
+  const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }]);
 
   const contentImages = [
     {
-      source:
-        'https://fotolifeakademi.com/uploads/2020/04/manzara-fotografi-cekmek-724x394.webp',
+      type: 'photo',
+      uri: 'https://fotolifeakademi.com/uploads/2020/04/manzara-fotografi-cekmek-724x394.webp',
       key: 1,
     },
     {
-      source:
-        'https://www.arthenos.com/wp-content/uploads/2017/08/Manzara_fotografciligi_2.jpg',
+      type: 'photo',
+      uri: 'https://www.arthenos.com/wp-content/uploads/2017/08/Manzara_fotografciligi_2.jpg',
       key: 2,
     },
     {
-      source:
-        'https://mediatrend.mediamarkt.com.tr/wp-content/uploads/2017/02/2017_subat_03.jpg',
+      type: 'photo',
+      uri: 'https://mediatrend.mediamarkt.com.tr/wp-content/uploads/2017/02/2017_subat_03.jpg',
       key: 3,
+    },
+    {
+      type: 'video',
+      uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+      key: 4,
     },
   ];
 
@@ -58,7 +79,11 @@ const PostCard = () => {
         </View>
         {/* Icon */}
         <View style={styles.headerIcon}>
-          <Icon name="dots-vertical" size={hp(3.5)} allowFontScaling={false} />
+          <MaterialCommunityIcons
+            name="dots-vertical"
+            size={hp(3.5)}
+            allowFontScaling={false}
+          />
         </View>
       </View>
       {/* Content */}
@@ -67,15 +92,54 @@ const PostCard = () => {
           data={contentImages}
           horizontal
           pagingEnabled
+          initialNumToRender={1}
+          removeClippedSubviews={false}
           showsHorizontalScrollIndicator={false}
           onLayout={e => setContentImageWidth(e.nativeEvent.layout.width)}
+          viewabilityConfigCallbackPairs={
+            viewabilityConfigCallbackPairs.current
+          }
           renderItem={({ item }) => (
             <View style={{ width: contentImageWidth }}>
-              <Image
-                source={{ uri: item.source }}
-                style={{ flex: 1 }}
-                resizeMode="contain"
-              />
+              {item.type == 'photo' ? (
+                <Image
+                  source={{ uri: item.uri }}
+                  style={{ flex: 1 }}
+                  resizeMode="contain"
+                />
+              ) : (
+                <View
+                  style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                  }}>
+                  <Video
+                    paused={contentVideoPause}
+                    repeat
+                    muted={contentVideoMuted}
+                    source={{ uri: item.uri }}
+                    resizeMode="contain"
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                    }}
+                    onTouchStart={() =>
+                      setContentVideoMuted(!contentVideoMuted)
+                    }
+                  />
+                  <Ionicons
+                    name="volume-mute"
+                    size={hp(5)}
+                    style={{
+                      position: 'absolute',
+                      backgroundColor: 'rgba(52,52,52,0.9)',
+                      borderRadius: 100,
+                      opacity: contentVideoMuted ? 1 : 0,
+                    }}
+                  />
+                </View>
+              )}
             </View>
           )}
         />
