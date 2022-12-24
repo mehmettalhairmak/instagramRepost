@@ -1,8 +1,12 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View, Text } from 'react-native';
 import { useRoute } from '@react-navigation/native';
 import PostCard from '../components/PostCard';
-import { heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
+import PasteFromClipboardButton from '../components/PasteFromClipboardButton';
 
 const HomeScreen = props => {
   const navigationRoute = useRoute();
@@ -16,6 +20,9 @@ const HomeScreen = props => {
       <View style={styles.cardContainer}>
         <PostCard />
       </View>
+      <View style={styles.buttonContainer}>
+        <PasteFromClipboardButton />
+      </View>
     </SafeAreaView>
   );
 };
@@ -23,11 +30,18 @@ const HomeScreen = props => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+    backgroundColor: '#FAFAFA',
   },
   cardContainer: {
-    flex: 1,
-    paddingHorizontal: hp(2),
-    paddingVertical: hp(12),
+    //marginTop: hp(12),
+    marginHorizontal: wp(2),
+  },
+  buttonContainer: {
+    width: wp(90),
+    height: hp(8),
+    //marginTop: hp(6),
   },
 });
 

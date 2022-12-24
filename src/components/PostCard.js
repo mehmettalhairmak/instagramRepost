@@ -21,10 +21,7 @@ const PostCard = () => {
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
 
   const onViewableItemsChanged = ({ viewableItems }) => {
-    // Do stuff
-    console.log(viewableItems[0].item.uri);
     contentImages.map((item, index) => {
-      console.log(item);
       viewableItems[0].item.uri == item.uri
         ? setContentVideoPause(false)
         : setContentVideoPause(true);
@@ -100,7 +97,8 @@ const PostCard = () => {
             viewabilityConfigCallbackPairs.current
           }
           renderItem={({ item }) => (
-            <View style={{ width: contentImageWidth }}>
+            <View
+              style={{ width: contentImageWidth, backgroundColor: '#000000' }}>
               {item.type == 'photo' ? (
                 <Image
                   source={{ uri: item.uri }}
@@ -182,7 +180,7 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 3.84,
     elevation: 5,
-    backgroundColor: 'white',
+    backgroundColor: '#FFFFFF',
     borderRadius: hp(4),
   },
   header: {
@@ -206,9 +204,6 @@ const styles = StyleSheet.create({
     marginRight: hp(1),
   },
   content: {
-    //flex: 1,
-    //width: '95%',
-    //borderWidth: 1,
     height: hp(40),
     marginHorizontal: hp(1.4),
   },
