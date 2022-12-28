@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FlatList,
   Image,
   ScrollView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import {
@@ -19,6 +20,12 @@ const PostCard = () => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
+
+  useEffect(() => {
+    return () => {
+      setContentVideoPause(false);
+    };
+  }, []);
 
   const onViewableItemsChanged = ({ viewableItems }) => {
     contentImages.map((item, index) => {
@@ -64,13 +71,16 @@ const PostCard = () => {
         {/* Title */}
         <View style={styles.headerTitle}>
           <Text
+            allowFontScaling={false}
             style={{
-              fontSize: 14,
+              fontSize: hp(2.1),
               fontFamily: 'Roboto-Bold',
             }}>
             username
           </Text>
-          <Text style={{ fontSize: 12, fontFamily: 'Roboto-Medium' }}>
+          <Text
+            allowFontScaling={false}
+            style={{ fontSize: hp(1.8), fontFamily: 'Roboto-Regular' }}>
             London
           </Text>
         </View>
@@ -115,6 +125,7 @@ const PostCard = () => {
                   <Video
                     paused={contentVideoPause}
                     repeat
+                    playInBackground={true}
                     muted={contentVideoMuted}
                     source={{ uri: item.uri }}
                     resizeMode="contain"
@@ -144,27 +155,29 @@ const PostCard = () => {
       </View>
       {/* Footer */}
       <View style={styles.footer}>
-        <Text style={{ fontSize: 14, fontFamily: 'Roboto-Bold' }}>
+        <Text
+          allowFontScaling={false}
+          style={{ fontSize: hp(2.1), fontFamily: 'Roboto-Bold' }}>
           10.328 views
         </Text>
-        <View style={{ flexDirection: 'row' }}>
-          <ScrollView style={{ height: hp(7.8) }}>
-            <Text
-              style={{
-                fontSize: 12,
-                marginLeft: hp(1),
-                flexWrap: 'wrap',
-                fontFamily: 'Roboto-Medium',
-              }}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-              posuere non augue sed eleifend. Proin suscipit purus pretium,
-              suscipit arcu id, sollicitudin lectus. Pellentesque malesuada
-              nulla quis velit tincidunt, nec cursus metus auctor. Sed varius
-              quis nunc sit amet ultrices. Pellentesque sagittis vel sem id
-              mollis. Vivamus at viverra neque.
-            </Text>
-          </ScrollView>
-        </View>
+        <TouchableOpacity style={{ flexDirection: 'row', height: hp(7.8) }}>
+          <Text
+            numberOfLines={3}
+            allowFontScaling={false}
+            style={{
+              fontSize: hp(1.8),
+              marginLeft: hp(1),
+              flexWrap: 'wrap',
+              fontFamily: 'Roboto-Regular',
+            }}>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
+            posuere non augue sed eleifend. Proin suscipit purus pretium,
+            suscipit arcu id, sollicitudin lectus. Pellentesque malesuada nulla
+            quis velit tincidunt, nec cursus metus auctor. Sed varius quis nunc
+            sit amet ultrices. Pellentesque sagittis vel sem id mollis. Vivamus
+            at viverra neque.
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
