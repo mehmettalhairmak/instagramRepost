@@ -7,16 +7,20 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
+import ScreenHeader from '../components/ScreenHeader';
 
 const PostScreen = () => {
   const navigationRoute = useRoute();
 
   useEffect(() => {
-    console.log(navigationRoute?.params?.item);
+    //console.log(navigationRoute?.params?.item);
   }, [navigationRoute]);
 
   return (
     <SafeAreaView style={styles.container}>
+      <View style={{ height: hp(8) }}>
+        <ScreenHeader title="Post Screen" isBackTrue />
+      </View>
       <View style={styles.cardContainer}>
         <PostCard />
       </View>
@@ -40,7 +44,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#FAFAFA',
   },
   cardContainer: {
-    //marginTop: hp(12),
     marginHorizontal: wp(2),
   },
   buttonContainer: {
