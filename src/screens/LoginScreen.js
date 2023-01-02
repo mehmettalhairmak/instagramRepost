@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
 import CookieManager from '@react-native-cookies/cookies';
 import {
@@ -7,7 +7,12 @@ import {
   INSTAGRAM_APP_SECRET,
   REDIRECT_URL,
 } from '../constants/instagram';
+import {
+  heightPercentageToDP as hp,
+  widthPercentageToDP as wp,
+} from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
+import Button from '../components/Button';
 
 const LoginScreen = () => {
   const insRef = useRef();
@@ -27,23 +32,21 @@ const LoginScreen = () => {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <TouchableOpacity
-        style={styles.button}
-        onPress={() => insRef.current.show()}>
-        <Text style={{ color: 'white', textAlign: 'center' }}>Login now</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={[styles.button, { marginTop: 10, backgroundColor: 'green' }]}
-        onPress={onClear}>
-        <Text style={{ color: 'white', textAlign: 'center' }}>Logout</Text>
-      </TouchableOpacity>
-      <Text style={{ margin: 10 }}>
-        User Token: {currentUser != null ? currentUser.access_token : ''}
-      </Text>
-      <Text style={{ margin: 10 }}>
-        User ID: {currentUser != null ? currentUser.user_id : ''}
-      </Text>
+    <View style={{ flex: 1, alignItems: 'center' }}>
+      <View style={styles.content}>
+        <Text
+          allowFontScaling={false}
+          style={{ fontFamily: 'Roboto-Bold', fontSize: hp(3.4) }}>
+          Instagram Repost
+        </Text>
+      </View>
+      <View style={styles.login}>
+        <Button
+          text="Login With Instagram"
+          textColor="black"
+          onPress={() => insRef.current.show()}
+        />
+      </View>
       <InstagramLogin
         ref={insRef}
         appId={INSTAGRAM_APP_ID}
@@ -58,13 +61,17 @@ const LoginScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  button: {
-    borderRadius: 5,
-    backgroundColor: 'orange',
-    height: 30,
-    width: 100,
+  content: {
+    width: wp(100),
+    height: hp(60),
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  login: {
+    width: wp(100),
+    height: hp(40),
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
