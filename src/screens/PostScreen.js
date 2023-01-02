@@ -18,7 +18,7 @@ const PostScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <View style={{ height: hp(8) }}>
+      <View style={{ width: wp(100), height: hp(8) }}>
         <ScreenHeader title="Post Screen" isBackTrue />
       </View>
       <View style={styles.cardContainer}>
@@ -40,10 +40,11 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'space-evenly',
     backgroundColor: '#FAFAFA',
   },
   cardContainer: {
+    height: hp(75),
+    justifyContent: 'center',
     marginHorizontal: wp(2),
   },
   buttonContainer: {
