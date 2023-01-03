@@ -21,7 +21,12 @@ const ScreenHeader = ({ title, isBackTrue }) => {
 
   return (
     <View style={styles.container}>
-      <View style={{ width: '25%', alignItems: 'center', borderWidth: 1 }}>
+      <View
+        style={{
+          width: '25%',
+          alignItems: 'center',
+          alignItems: 'flex-start',
+        }}>
         {isBackTrue && (
           <TouchableOpacity
             onPress={() => navigation.canGoBack() && navigation.goBack()}>
@@ -29,14 +34,19 @@ const ScreenHeader = ({ title, isBackTrue }) => {
           </TouchableOpacity>
         )}
       </View>
-      <View style={{ width: '50%', alignItems: 'center', borderWidth: 1 }}>
+      <View style={{ width: '50%', alignItems: 'center' }}>
         <Text
           allowFontScaling={false}
           style={{ fontSize: hp(3), fontFamily: 'Roboto-Bold' }}>
           {title}
         </Text>
       </View>
-      <View style={{ width: '25%', alignItems: 'center', borderWidth: 1 }}>
+      <View
+        style={{
+          width: '25%',
+          alignItems: 'center',
+          alignItems: 'flex-end',
+        }}>
         {!isBackTrue && (
           <TouchableOpacity onPress={signOut}>
             <MaterialCommunityIcons name="logout" size={hp(4.4)} />
