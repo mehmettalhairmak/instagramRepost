@@ -25,8 +25,6 @@ const LoginScreen = () => {
     }
   }, [currentUser]);
 
-  const onClear = () => {};
-
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
       <View style={styles.content}>
