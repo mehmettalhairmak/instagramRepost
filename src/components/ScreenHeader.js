@@ -13,10 +13,9 @@ const ScreenHeader = ({ title, isBackTrue }) => {
   const navigation = useNavigation();
 
   const signOut = () => {
-    CookieManager.clearAll(true);
-    // .then(res => {
-    //   setCurrentUser(null);
-    // });
+    CookieManager.clearAll(true).then(res => {
+      navigation.navigate('LoginScreen');
+    });
   };
 
   return (
