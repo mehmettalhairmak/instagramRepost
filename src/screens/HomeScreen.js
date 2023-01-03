@@ -9,6 +9,7 @@ import Button from '../components/Button';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import InfoPostCard from '../components/InfoPostCard';
+import ScreenHeader from '../components/ScreenHeader';
 
 const HomeScreen = () => {
   const navigationRoute = useRoute();
@@ -44,6 +45,10 @@ const HomeScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Screen Header */}
+      <View style={{ width: wp(100), height: hp(8) }}>
+        <ScreenHeader title="Home Screen" />
+      </View>
       {/* User Guide */}
       <View
         style={{
@@ -93,7 +98,7 @@ const HomeScreen = () => {
       <View
         style={{
           width: wp(100),
-          height: hp(25),
+          height: hp(20),
           alignItems: 'center',
           justifyContent: 'center',
           borderColor: 'red',
@@ -108,7 +113,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    backgroundColor: '#FAFAFA',
+    backgroundColor: '#FFFFFF',
   },
 });
 
