@@ -25,11 +25,7 @@ const LoginScreen = () => {
     }
   }, [currentUser]);
 
-  const onClear = () => {
-    CookieManager.clearAll(true).then(res => {
-      setCurrentUser(null);
-    });
-  };
+  const onClear = () => {};
 
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
