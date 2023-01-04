@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
 import CookieManager from '@react-native-cookies/cookies';
@@ -13,11 +13,21 @@ import {
 } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
+import { AuthContext } from '../context/AuthContextProvider';
 
 const LoginScreen = () => {
   const insRef = useRef();
   const [currentUser, setCurrentUser] = useState(null);
   const navigation = useNavigation();
+  const { authState, authContext } = useContext(AuthContext);
+
+  useEffect(() => {
+    authContext.creditUpdate({ payload: 'mehmettalhairmak' });
+  }, []);
+
+  useEffect(() => {
+    console.log(authState);
+  }, [authState]);
 
   useEffect(() => {
     if (currentUser != null) {
