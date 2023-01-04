@@ -42,21 +42,26 @@ const PostScreen = () => {
   }, [navigationRoute]);
 
   const saveImages = async () => {
-    const fileState = await hasAndroidPermission();
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
       return;
     }
 
+    const date = new Date();
+    const time = date.getTime();
+
+    const path = RNFS.DocumentDirectoryPath + '/' + time + '.mp4';
+
     RNFS.downloadFile({
-      fromUrl: '',
-      toFile: '',
-      cacheable,
+      fromUrl: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
+      toFile: path,
+      cacheable: true,
       progressInterval: 100,
       begin: () => {
         console.log('download start');
       },
-    }).promise.then(() => {
-      console.log('download finished');
+    }).promise.then(result => {
+      console.log('download finished --> ', path);
+      CameraRoll.save(path, 'video').then(result => console.log(result));
     });
   };
 
