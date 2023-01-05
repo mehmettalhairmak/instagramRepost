@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, FlatList } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import {
@@ -10,13 +10,15 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
+import { AuthContext } from '../context/AuthContextProvider';
 
 const HomeScreen = () => {
   const navigationRoute = useRoute();
   const navigation = useNavigation();
+  const { authState } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(navigationRoute?.params?.item);
+    console.log(authState.user);
   }, [navigationRoute]);
 
   const postRules = [

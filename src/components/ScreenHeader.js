@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {
   heightPercentageToDP as hp,
@@ -8,12 +8,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
 import CookieManager from '@react-native-cookies/cookies';
+import { AuthContext } from '../context/AuthContextProvider';
 
 const ScreenHeader = ({ title, isBackTrue }) => {
   const navigation = useNavigation();
+  const { authContext } = useContext(AuthContext);
 
   const signOut = () => {
     CookieManager.clearAll(true).then(res => {
+      authContext.creditUpdate({ payload: null });
       navigation.navigate('LoginScreen');
     });
   };

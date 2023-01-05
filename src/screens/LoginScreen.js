@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
-import CookieManager from '@react-native-cookies/cookies';
 import {
   INSTAGRAM_APP_ID,
   INSTAGRAM_APP_SECRET,
@@ -17,23 +16,14 @@ import { AuthContext } from '../context/AuthContextProvider';
 
 const LoginScreen = () => {
   const insRef = useRef();
-  const [currentUser, setCurrentUser] = useState(null);
   const navigation = useNavigation();
   const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
-    authContext.creditUpdate({ payload: 'mehmettalhairmak' });
-  }, []);
-
-  useEffect(() => {
-    console.log(authState);
-  }, [authState]);
-
-  useEffect(() => {
-    if (currentUser != null) {
-      navigation.navigate('HomeScreen', { item: currentUser });
+    if (authState.user != null) {
+      navigation.navigate('HomeScreen');
     }
-  }, [currentUser]);
+  }, [authState.user]);
 
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
@@ -57,7 +47,7 @@ const LoginScreen = () => {
         appSecret={INSTAGRAM_APP_SECRET}
         redirectUrl={REDIRECT_URL}
         scopes={['user_profile', 'user_media']}
-        onLoginSuccess={token => setCurrentUser(token)}
+        onLoginSuccess={user => authContext.creditUpdate({ payload: user })}
         onLoginFailure={data => console.log('login_error ---> ', data)}
       />
     </View>
