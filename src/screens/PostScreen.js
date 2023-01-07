@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -15,11 +15,18 @@ import {
 } from 'react-native-responsive-screen';
 import ScreenHeader from '../components/ScreenHeader';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
+import { AuthContext } from '../context/AuthContextProvider';
 
 var RNFS = require('react-native-fs');
 
 const PostScreen = () => {
   const navigationRoute = useRoute();
+
+  const { authState, authContext } = useContext(AuthContext);
+
+  useEffect(() => {
+    console.log('PPOOSSSTTT ---> ' + JSON.stringify(authState.post));
+  }, []);
 
   const hasAndroidPermission = async () => {
     const permission =
@@ -36,10 +43,6 @@ const PostScreen = () => {
     const status = await PermissionsAndroid.request(permission);
     return status === 'granted';
   };
-
-  useEffect(() => {
-    //console.log(navigationRoute?.params?.item);
-  }, [navigationRoute]);
 
   const saveImages = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {

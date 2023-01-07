@@ -13,13 +13,14 @@ import ScreenHeader from '../components/ScreenHeader';
 import { AuthContext } from '../context/AuthContextProvider';
 
 const HomeScreen = () => {
-  const navigationRoute = useRoute();
   const navigation = useNavigation();
-  const { authState } = useContext(AuthContext);
+  const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(authState.user);
-  }, [navigationRoute]);
+    if (authState.post != null) {
+      navigation.navigate('PostScreen');
+    }
+  }, [authState.post]);
 
   const postRules = [
     { title: 'Open Instagram.' },
@@ -35,7 +36,12 @@ const HomeScreen = () => {
       postLink.includes('https://www.instagram.com/p/') ||
       postLink.includes('https://www.instagram.com/reel/')
     ) {
-      navigation.navigate('PostScreen', { item: postLink });
+      let array = postLink.includes('/p')
+        ? postLink.split('/p/')
+        : postLink.split('/reel/');
+      const shortCode = array[1].split('/')[0];
+      console.log('shortCode --> ' + shortCode);
+      //authContext.getPost({ payload: shortCode });
     } else {
       displayMessage(
         'error',

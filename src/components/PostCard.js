@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import {
   FlatList,
   Image,
-  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -15,11 +14,14 @@ import {
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { AuthContext } from '../context/AuthContextProvider';
 
-const PostCard = () => {
+const PostCard = ({ textOnPress }) => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
+  const { authState, authContext } = useContext(AuthContext);
+  const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }]);
 
   useEffect(() => {
     return () => {
@@ -34,30 +36,20 @@ const PostCard = () => {
         : setContentVideoPause(true);
     });
   };
-  const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }]);
 
-  const contentImages = [
-    {
-      type: 'photo',
-      uri: 'https://fotolifeakademi.com/uploads/2020/04/manzara-fotografi-cekmek-724x394.webp',
-      key: 1,
-    },
-    {
-      type: 'photo',
-      uri: 'https://www.arthenos.com/wp-content/uploads/2017/08/Manzara_fotografciligi_2.jpg',
-      key: 2,
-    },
-    {
-      type: 'photo',
-      uri: 'https://mediatrend.mediamarkt.com.tr/wp-content/uploads/2017/02/2017_subat_03.jpg',
-      key: 3,
-    },
-    {
-      type: 'video',
-      uri: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-      key: 4,
-    },
-  ];
+  const getImages = () => {
+    let content = [];
+    let postObject = authState.post;
+    if (postObject.__typename == 'GraphSidecar') {
+      postObject.edge_sidecar_to_children.edges.map(item => {
+        content.push({
+          src: item.node.display_url,
+          isVideo: item.node.is_video,
+        });
+      });
+    }
+    return content;
+  };
 
   return (
     <View style={styles.container}>
@@ -65,7 +57,7 @@ const PostCard = () => {
       <View style={styles.header}>
         {/* Avatar */}
         <Image
-          source={require('../../assets/images/avatar.png')}
+          source={authState.post.owner.profile_pic_url}
           style={styles.avatar}
         />
         {/* Title */}
@@ -76,7 +68,7 @@ const PostCard = () => {
               fontSize: hp(2.1),
               fontFamily: 'Roboto-Bold',
             }}>
-            username
+            {authState.post.owner.username}
           </Text>
           <Text
             allowFontScaling={false}
@@ -96,7 +88,7 @@ const PostCard = () => {
       {/* Content */}
       <View style={styles.content}>
         <FlatList
-          data={contentImages}
+          data={getImages()}
           horizontal
           pagingEnabled
           initialNumToRender={1}
@@ -109,9 +101,9 @@ const PostCard = () => {
           renderItem={({ item }) => (
             <View
               style={{ width: contentImageWidth, backgroundColor: '#000000' }}>
-              {item.type == 'photo' ? (
+              {!item.isVideo ? (
                 <Image
-                  source={{ uri: item.uri }}
+                  source={{ uri: item.src }}
                   style={{ flex: 1 }}
                   resizeMode="contain"
                 />
@@ -127,7 +119,7 @@ const PostCard = () => {
                     repeat
                     playInBackground={true}
                     muted={contentVideoMuted}
-                    source={{ uri: item.uri }}
+                    source={{ uri: item.src }}
                     resizeMode="contain"
                     style={{
                       width: '100%',
@@ -160,7 +152,9 @@ const PostCard = () => {
           style={{ fontSize: hp(2.1), fontFamily: 'Roboto-Bold' }}>
           10.328 views
         </Text>
-        <TouchableOpacity style={{ flexDirection: 'row', height: hp(7.8) }}>
+        <TouchableOpacity
+          style={{ flexDirection: 'row', height: hp(7.8) }}
+          onPress={textOnPress}>
           <Text
             numberOfLines={3}
             allowFontScaling={false}
@@ -170,12 +164,7 @@ const PostCard = () => {
               flexWrap: 'wrap',
               fontFamily: 'Roboto-Regular',
             }}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla
-            posuere non augue sed eleifend. Proin suscipit purus pretium,
-            suscipit arcu id, sollicitudin lectus. Pellentesque malesuada nulla
-            quis velit tincidunt, nec cursus metus auctor. Sed varius quis nunc
-            sit amet ultrices. Pellentesque sagittis vel sem id mollis. Vivamus
-            at viverra neque.
+            {authState.post.edge_media_to_caption.edges[0].node.text}
           </Text>
         </TouchableOpacity>
       </View>

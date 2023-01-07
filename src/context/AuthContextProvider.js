@@ -41,7 +41,6 @@ const AuthContextProvider = props => {
     () => ({
       creditUpdate: async data => {
         dispatch({ type: 'sync', payload: data.payload });
-        console.log('context --> ' + JSON.stringify(data));
       },
       getPost: async link => {
         const post = await getMedia(link.payload);
