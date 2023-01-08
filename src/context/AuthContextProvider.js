@@ -1,12 +1,15 @@
 import React from 'react';
+import { getMedia } from '../api/instagram';
 
 const initialState = {
   user: null,
+  post: null,
 };
 
 export const AuthContext = React.createContext({
   authContext: {
     creditUpdate: data => {},
+    getPost: link => {},
   },
   authState: {
     ...initialState,
@@ -22,7 +25,11 @@ const AuthContextProvider = props => {
             ...prevState,
             user: action.payload,
           };
-
+        case 'getPost':
+          return {
+            ...prevState,
+            post: action.payload,
+          };
         default:
           break;
       }
@@ -34,6 +41,10 @@ const AuthContextProvider = props => {
     () => ({
       creditUpdate: async data => {
         dispatch({ type: 'sync', payload: data.payload });
+      },
+      getPost: async link => {
+        const post = await getMedia(link.payload);
+        dispatch({ type: 'getPost', payload: post });
       },
     }),
     [],
