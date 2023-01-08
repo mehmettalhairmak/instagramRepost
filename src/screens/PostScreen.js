@@ -16,6 +16,7 @@ import ScreenHeader from '../components/ScreenHeader';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { AuthContext } from '../context/AuthContextProvider';
 import Clipboard from '@react-native-clipboard/clipboard';
+import { displayMessage } from '../helpers';
 
 var RNFS = require('react-native-fs');
 
@@ -57,10 +58,12 @@ const PostScreen = () => {
     return status === 'granted';
   };
 
-  const saveCaption = () =>
+  const saveCaption = () => {
     Clipboard.setString(
       authState.post.edge_media_to_caption.edges[0].node.text,
     );
+    displayMessage('success', 'Success', 'Successfully copied text to clipboard.');
+  };
 
   const saveImages = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
@@ -82,7 +85,14 @@ const PostScreen = () => {
       },
     }).promise.then(result => {
       console.log('download finished --> ', path);
-      CameraRoll.save(path, 'video').then(result => console.log(result));
+      CameraRoll.save(path, 'video').then(result => {
+        console.log(result);
+        displayMessage(
+          'success',
+          'Success',
+          'The media has been successfully saved to the gallery',
+        );
+      });
     });
   };
 
