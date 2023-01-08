@@ -1,0 +1,21 @@
+{
+  "translation": {
+    "LoginWithInstagram": "Login with Instagram",
+    "OpenInstagram": "Open Instagram.",
+    "HowToGetPost": "How To Get Post?",
+    "FindThePostYouWantToSave": "Find the post you want to save.",
+    "TapDotsInTheUpperRightCornerAndSelectLink": "Tap ••• in the upper right corner and select <<Link>>",
+    "ReturnAppAndClickGoToPostButton": "Return app and click 'Go To Post' button.",
+    "Username": "Username",
+    "HomeScreen": "Home Screen",
+    "PostScreen": "Post Screen",
+    "Error": "Error",
+    "ThisIsNotInstagramPostOrReelLink": "This is not Instagram post or reel link.",
+    "GoToPost": "Go To Post",
+    "Success": "Success",
+    "SuccessfulyCopiedTextToClipboard": "Successfully copied text to clipboard",
+    "TheMediaHasBeenSuccessfullySavedToTheGallery": "The media has been successfully saved to the gallery.",
+    "Save": "Save",
+    "Likes": "Likes"
+  }
+}

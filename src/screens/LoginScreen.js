@@ -13,15 +13,12 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
 import { AuthContext } from '../context/AuthContextProvider';
+import i18next from 'i18next';
 
 const LoginScreen = () => {
   const insRef = useRef();
   const navigation = useNavigation();
   const { authState, authContext } = useContext(AuthContext);
-
-  useEffect(() => {
-    console.log('a');
-  });
 
   useEffect(() => {
     if (authState.user != null) {
@@ -40,7 +37,7 @@ const LoginScreen = () => {
       </View>
       <View style={styles.login}>
         <Button
-          text="Login With Instagram"
+          text={i18next.t('LoginWithInstagram')}
           textColor="black"
           onPress={() => insRef.current.show()}
         />

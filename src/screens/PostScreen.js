@@ -17,6 +17,7 @@ import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { AuthContext } from '../context/AuthContextProvider';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
+import i18next from 'i18next';
 
 var RNFS = require('react-native-fs');
 
@@ -62,7 +63,11 @@ const PostScreen = () => {
     Clipboard.setString(
       authState.post.edge_media_to_caption.edges[0].node.text,
     );
-    displayMessage('success', 'Success', 'Successfully copied text to clipboard.');
+    displayMessage(
+      'success',
+      i18next.t('Success'),
+      i18next.t('SuccessfulyCopiedTextToClipboard'),
+    );
   };
 
   const saveImages = async () => {
@@ -89,8 +94,8 @@ const PostScreen = () => {
         console.log(result);
         displayMessage(
           'success',
-          'Success',
-          'The media has been successfully saved to the gallery',
+          i18next.t('Success'),
+          i18next.t('TheMediaHasBeenSuccessfullySavedToTheGallery'),
         );
       });
     });
@@ -99,7 +104,7 @@ const PostScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ width: wp(100), height: hp(8) }}>
-        <ScreenHeader title="Post Screen" isBackTrue />
+        <ScreenHeader title={i18next.t('PostScreen')} isBackTrue />
       </View>
       <View style={styles.cardContainer}>
         <PostCard
@@ -114,7 +119,7 @@ const PostScreen = () => {
         <Button
           status="save"
           textColor="white"
-          text="Save"
+          text={i18next.t('Save')}
           onPress={saveImages}
         />
       </View>

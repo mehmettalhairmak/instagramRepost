@@ -1,0 +1,21 @@
+{
+  "translation": {
+    "LoginWithInstagram": "Instagram ile Giriş Yap",
+    "OpenInstagram": "Instagram'ı açın.",
+    "HowToGetPost": "Gönderi Nasıl Getirilir?",
+    "FindThePostYouWantToSave": "Kaydetmek istediğiniz gönderiyi bulun.",
+    "TapDotsInTheUpperRightCornerAndSelectLink": "Sağ üst köşedeki ••• öğesine dokunun ve <<Bağlantı>> öğesini seçin.",
+    "ReturnAppAndClickGoToPostButton": "Uygulamaya geri dön ve 'Gönderiye Git' Butonuna Dokun.",
+    "Username": "Kullanıcı Adı",
+    "HomeScreen": "Ana Ekran",
+    "PostScreen": "Gönderi Ekranı",
+    "Error": "Hata",
+    "ThisIsNotInstagramPostOrReelLink": "Kopyalanan metin Instagram gönderi veya reel bağlantısı değil.",
+    "GoToPost": "Gönderiye Git",
+    "Success": "Başarılı",
+    "SuccessfulyCopiedTextToClipboard": "Metin başarıyla panoya kopyalandı.",
+    "TheMediaHasBeenSuccessfullySavedToTheGallery": "Medya başarıyla galeriye kaydedildi.",
+    "Save": "Kaydet",
+    "Likes": "Beğeni"
+  }
+}

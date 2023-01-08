@@ -14,13 +14,12 @@ import {
 import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { AuthContext } from '../context/AuthContextProvider';
+import i18next from 'i18next';
 
 const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
-  const { authState, authContext } = useContext(AuthContext);
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }]);
 
   useEffect(() => {
@@ -133,7 +132,7 @@ const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
         <Text
           allowFontScaling={false}
           style={{ fontSize: hp(2.1), fontFamily: 'Roboto-Bold' }}>
-          10.328 views
+          10.328 {i18next.t('Likes')}
         </Text>
         <TouchableOpacity
           style={{ flexDirection: 'row', height: hp(7.8) }}

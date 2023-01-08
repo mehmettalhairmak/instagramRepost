@@ -11,6 +11,7 @@ import { displayMessage } from '../helpers';
 import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
 import { AuthContext } from '../context/AuthContextProvider';
+import i18next from 'i18next';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -23,10 +24,10 @@ const HomeScreen = () => {
   }, [authState.post]);
 
   const postRules = [
-    { title: 'Open Instagram.' },
-    { title: 'Find the post you want to save.' },
-    { title: 'Tap ••• in the upper right corner and select <<Link>>' },
-    { title: 'Return app and click Go To Post button.' },
+    { title: i18next.t('OpenInstagram') },
+    { title: i18next.t('FindThePostYouWantToSave') },
+    { title: i18next.t('TapDotsInTheUpperRightCornerAndSelectLink') },
+    { title: i18next.t('ReturnAppAndClickGoToPostButton') },
   ];
 
   const goToPost = async () => {
@@ -45,8 +46,8 @@ const HomeScreen = () => {
     } else {
       displayMessage(
         'error',
-        'Error',
-        'This is not instagram post or reel link',
+        i18next.t('Error'),
+        i18next.t('ThisIsNotInstagramPostOrReelLink'),
       );
     }
   };
@@ -55,7 +56,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* Screen Header */}
       <View style={{ width: wp(100), height: hp(8) }}>
-        <ScreenHeader title="Home Screen" />
+        <ScreenHeader title={i18next.t('HomeScreen')} />
       </View>
       {/* User Guide */}
       <View
@@ -81,7 +82,7 @@ const HomeScreen = () => {
             <Text
               allowFontScaling={false}
               style={{ fontFamily: 'Roboto-Bold', fontSize: hp(3.4) }}>
-              How To Get Post?
+              {i18next.t('HowToGetPost')}
             </Text>
           )}
           renderItem={({ item, index }) => (
@@ -111,7 +112,11 @@ const HomeScreen = () => {
           justifyContent: 'center',
           borderColor: 'red',
         }}>
-        <Button textColor="black" text="Go To Post" onPress={goToPost} />
+        <Button
+          textColor="black"
+          text={i18next.t('GoToPost')}
+          onPress={goToPost}
+        />
       </View>
     </SafeAreaView>
   );
