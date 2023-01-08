@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {
   SafeAreaView,
   View,
@@ -6,7 +6,6 @@ import {
   Platform,
   PermissionsAndroid,
 } from 'react-native';
-import { useRoute } from '@react-navigation/native';
 import PostCard from '../components/PostCard';
 import Button from '../components/Button';
 import {
@@ -16,17 +15,31 @@ import {
 import ScreenHeader from '../components/ScreenHeader';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
 import { AuthContext } from '../context/AuthContextProvider';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 var RNFS = require('react-native-fs');
 
 const PostScreen = () => {
-  const navigationRoute = useRoute();
-
   const { authState, authContext } = useContext(AuthContext);
 
-  useEffect(() => {
-    console.log('PPOOSSSTTT ---> ' + JSON.stringify(authState.post));
-  }, []);
+  const contentImages = () => {
+    let content = [];
+    let postObject = authState.post;
+    if (postObject.__typename == 'GraphSidecar') {
+      postObject.edge_sidecar_to_children.edges.map(item => {
+        content.push({
+          isVideo: item.node.is_video,
+          src: item.node.display_url,
+        });
+      });
+    } else if (postObject.__typename == 'GraphImage') {
+      content.push({
+        isVideo: postObject.is_video,
+        src: postObject.display_url,
+      });
+    }
+    return content;
+  };
 
   const hasAndroidPermission = async () => {
     const permission =
@@ -43,6 +56,11 @@ const PostScreen = () => {
     const status = await PermissionsAndroid.request(permission);
     return status === 'granted';
   };
+
+  const saveCaption = () =>
+    Clipboard.setString(
+      authState.post.edge_media_to_caption.edges[0].node.text,
+    );
 
   const saveImages = async () => {
     if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
@@ -74,7 +92,13 @@ const PostScreen = () => {
         <ScreenHeader title="Post Screen" isBackTrue />
       </View>
       <View style={styles.cardContainer}>
-        <PostCard />
+        <PostCard
+          avatar={authState.post.owner.profile_pic_url}
+          username={authState.post.owner.username}
+          content={contentImages()}
+          caption={authState.post.edge_media_to_caption.edges[0].node.text}
+          captionOnPress={saveCaption}
+        />
       </View>
       <View style={styles.buttonContainer}>
         <Button

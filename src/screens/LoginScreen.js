@@ -20,6 +20,10 @@ const LoginScreen = () => {
   const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
+    console.log('a');
+  });
+
+  useEffect(() => {
     if (authState.user != null) {
       navigation.navigate('HomeScreen');
     }

@@ -16,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import { AuthContext } from '../context/AuthContextProvider';
 
-const PostCard = ({ textOnPress }) => {
+const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
@@ -37,29 +37,12 @@ const PostCard = ({ textOnPress }) => {
     });
   };
 
-  const getImages = () => {
-    let content = [];
-    let postObject = authState.post;
-    if (postObject.__typename == 'GraphSidecar') {
-      postObject.edge_sidecar_to_children.edges.map(item => {
-        content.push({
-          src: item.node.display_url,
-          isVideo: item.node.is_video,
-        });
-      });
-    }
-    return content;
-  };
-
   return (
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
         {/* Avatar */}
-        <Image
-          source={authState.post.owner.profile_pic_url}
-          style={styles.avatar}
-        />
+        <Image source={{ uri: avatar }} style={styles.avatar} />
         {/* Title */}
         <View style={styles.headerTitle}>
           <Text
@@ -68,7 +51,7 @@ const PostCard = ({ textOnPress }) => {
               fontSize: hp(2.1),
               fontFamily: 'Roboto-Bold',
             }}>
-            {authState.post.owner.username}
+            {username}
           </Text>
           <Text
             allowFontScaling={false}
@@ -88,7 +71,7 @@ const PostCard = ({ textOnPress }) => {
       {/* Content */}
       <View style={styles.content}>
         <FlatList
-          data={getImages()}
+          data={content}
           horizontal
           pagingEnabled
           initialNumToRender={1}
@@ -154,7 +137,7 @@ const PostCard = ({ textOnPress }) => {
         </Text>
         <TouchableOpacity
           style={{ flexDirection: 'row', height: hp(7.8) }}
-          onPress={textOnPress}>
+          onPress={captionOnPress}>
           <Text
             numberOfLines={3}
             allowFontScaling={false}
@@ -164,7 +147,7 @@ const PostCard = ({ textOnPress }) => {
               flexWrap: 'wrap',
               fontFamily: 'Roboto-Regular',
             }}>
-            {authState.post.edge_media_to_caption.edges[0].node.text}
+            {caption}
           </Text>
         </TouchableOpacity>
       </View>
