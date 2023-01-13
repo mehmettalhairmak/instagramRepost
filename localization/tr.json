@@ -16,6 +16,12 @@
     "SuccessfulyCopiedTextToClipboard": "Metin başarıyla panoya kopyalandı.",
     "TheMediaHasBeenSuccessfullySavedToTheGallery": "Medya başarıyla galeriye kaydedildi.",
     "Save": "Kaydet",
-    "Likes": "Beğeni"
+    "Likes": "Beğeni",
+    "SaveCurrentMediaOrAllMedia": "Mevcut medyayı mı kaydetmek istersiniz yoksa tüm medyaları mı?",
+    "CurrentMedia": "Mevcut Medya",
+    "AllMedia": "Tüm Medyalar",
+    "AreYouSureForWantToSaveMedia":"Medyayı kaydetmek istediğinize emin misiniz?",
+    "Yes":"Evet",
+    "No":"Hayır"
   }
 }
