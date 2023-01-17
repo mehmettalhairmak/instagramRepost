@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -15,8 +15,25 @@ import Video from 'react-native-video';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import i18next from 'i18next';
+import { InstagramPostModelCache } from '../models/PostModelCache';
 
-const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
+interface PostCardProps {
+  avatar: string;
+  username: string;
+  location: string;
+  content: InstagramPostModelCache[];
+  caption: string;
+  captionOnPress: any;
+}
+
+const PostCard: React.FC<PostCardProps> = ({
+  avatar,
+  username,
+  location,
+  content,
+  caption,
+  captionOnPress,
+}) => {
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
@@ -28,13 +45,13 @@ const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
     };
   }, []);
 
-  const onViewableItemsChanged = ({ viewableItems }) => {
-    contentImages.map((item, index) => {
-      viewableItems[0].item.uri == item.uri
+  function onViewableItemsChanged({ viewableItems }: { viewableItems: any }) {
+    content.map((item: any) => {
+      viewableItems[0].item.src == item.src
         ? setContentVideoPause(false)
         : setContentVideoPause(true);
     });
-  };
+  }
 
   return (
     <View style={styles.container}>
@@ -55,7 +72,7 @@ const PostCard = ({ avatar, username, content, caption, captionOnPress }) => {
           <Text
             allowFontScaling={false}
             style={{ fontSize: hp(1.8), fontFamily: 'Roboto-Regular' }}>
-            London
+            {location}
           </Text>
         </View>
         {/* Icon */}

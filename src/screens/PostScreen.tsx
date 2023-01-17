@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import {
   SafeAreaView,
   View,
@@ -21,30 +21,50 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import i18next from 'i18next';
 import InstagramModal from '../components/InstagramModal';
+//import { PostAPI } from '../models/PostModelAPI';
+import { InstagramPostModelCache } from '../models/PostModelCache';
+import { CarouselMedia, InstagramPostModelAPI } from '../models/PostModelAPI';
 
 var RNFS = require('react-native-fs');
 
 const PostScreen = () => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { authState, authContext } = useContext(AuthContext);
+  const post: InstagramPostModelAPI = authState.post!;
+
+  useEffect(() => {
+    console.log('postScreen');
+    console.log(JSON.stringify(post));
+  }, []);
 
   const contentImages = () => {
-    let content = [];
-    let postObject = authState?.post;
-    if (postObject?.__typename == 'GraphSidecar') {
-      postObject.edge_sidecar_to_children.edges.map(item => {
-        content.push({
-          isVideo: item.node.is_video,
-          src: item.node.display_url,
-        });
-      });
-    } else if (postObject?.__typename == 'GraphImage') {
+    let content: InstagramPostModelCache[] = [];
+    const postObject = post;
+    if (postObject?.product_type === 'feed') {
       content.push({
-        isVideo: postObject.is_video,
-        src: postObject.display_url,
+        isVideo: false,
+        src: postObject.image_versions2.candidates[0].url,
+      });
+    } else if (postObject?.product_type === 'clips') {
+      content.push({
+        isVideo: true,
+        src: postObject!.video_versions![0].url,
+      });
+    } else if (postObject?.product_type === 'carousel_container') {
+      postObject.carousel_media!.map((item: CarouselMedia, index: number) => {
+        if (item.media_type === 1) {
+          content.push({
+            isVideo: false,
+            src: item.image_versions2.candidates[0].url,
+          });
+        } else if (item.media_type === 2) {
+          content.push({
+            isVideo: true,
+            src: item.video_versions![0].url,
+          });
+        }
       });
     }
-    content = [{id:1,text:"asd"}];
     return content;
   };
 
@@ -65,9 +85,8 @@ const PostScreen = () => {
   };
 
   const saveCaption = () => {
-    Clipboard.setString(
-      authState.post?.edge_media_to_caption?.edges[0]?.node?.text,
-    );
+    let caption = post.caption != null ? post.caption.text : '';
+    Clipboard.setString(caption);
     displayMessage(
       'success',
       i18next.t('Success'),
@@ -116,10 +135,11 @@ const PostScreen = () => {
       </View>
       <View style={styles.cardContainer}>
         <PostCard
-          avatar={authState?.post?.owner?.profile_pic_url}
-          username={authState?.post?.owner?.username}
+          avatar={post?.user.profile_pic_url}
+          username={post?.user.username}
+          location={post?.location != undefined ? post.location.name : ''}
           content={contentImages()}
-          caption={authState?.post?.edge_media_to_caption?.edges[0]?.node?.text}
+          caption={post?.caption != null ? post?.caption.text : ''}
           captionOnPress={saveCaption}
         />
       </View>

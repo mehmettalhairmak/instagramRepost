@@ -1,11 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View, Modal } from 'react-native';
-import {
-  heightPercentageToDP as hp,
-  widthPercentageToDP as wp,
-} from 'react-native-responsive-screen';
+import { StyleSheet, View, Modal, ModalProps } from 'react-native';
 
-const InstagramModal = props => {
+interface InstagramModalProps extends ModalProps {
+  children: React.ReactElement
+}
+
+const InstagramModal: React.FC<InstagramModalProps> = ({children, ...props}) => {
   return (
     <Modal animationType="slide" transparent={false} {...props}>
       <View
@@ -14,7 +14,7 @@ const InstagramModal = props => {
           justifyContent: 'flex-end',
           alignItems: 'center',
         }}>
-        {props.children}
+        {children}
       </View>
     </Modal>
   );

@@ -14,10 +14,13 @@ import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
 import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParams } from '../../App';
 
 const LoginScreen = () => {
-  const insRef = useRef();
-  const navigation = useNavigation();
+  const insRef = useRef<any>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
@@ -48,8 +51,10 @@ const LoginScreen = () => {
         appSecret={INSTAGRAM_APP_SECRET}
         redirectUrl={REDIRECT_URL}
         scopes={['user_profile', 'user_media']}
-        onLoginSuccess={user => authContext.creditUpdate({ payload: user })}
-        onLoginFailure={data => console.log('login_error ---> ', data)}
+        onLoginSuccess={(user: any) =>
+          authContext.creditUpdate({ payload: user })
+        }
+        onLoginFailure={(data: any) => console.log('login_error ---> ', data)}
       />
     </View>
   );

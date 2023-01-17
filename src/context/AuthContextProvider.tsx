@@ -8,15 +8,15 @@ const initialState = {
 
 export const AuthContext = React.createContext({
   authContext: {
-    creditUpdate: data => {},
-    getPost: link => {},
+    creditUpdate: (data: Object) => {},
+    getPost: (link: Object) => {},
   },
   authState: {
     ...initialState,
   },
 });
 
-const AuthContextProvider = props => {
+const AuthContextProvider = (props: { children: React.ReactElement }) => {
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {

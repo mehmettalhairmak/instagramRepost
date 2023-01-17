@@ -20,8 +20,10 @@
     "SaveCurrentMediaOrAllMedia": "Mevcut medyayı mı kaydetmek istersiniz yoksa tüm medyaları mı?",
     "CurrentMedia": "Mevcut Medya",
     "AllMedia": "Tüm Medyalar",
-    "AreYouSureForWantToSaveMedia":"Medyayı kaydetmek istediğinize emin misiniz?",
-    "Yes":"Evet",
-    "No":"Hayır"
+    "AreYouSureForWantToSaveMedia": "Medyayı kaydetmek istediğinize emin misiniz?",
+    "Yes": "Evet",
+    "No": "Hayır",
+    "SystemError": "Sistem Hatası",
+    "PleaseTryAgainLater": "Lütfen daha sonra tekrar deneyin."
   }
 }

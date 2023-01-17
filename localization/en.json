@@ -20,8 +20,10 @@
     "SaveCurrentMediaOrAllMedia": "Do you want to save current media or all media?",
     "CurrentMedia": "Current Media",
     "AllMedia": "All Media",
-    "AreYouSureForWantToSaveMedia":"Are you sure for want to save media?",
-    "Yes":"Yes",
-    "No":"No"
+    "AreYouSureForWantToSaveMedia": "Are you sure for want to save media?",
+    "Yes": "Yes",
+    "No": "No",
+    "SystemError": "System Error",
+    "PleaseTryAgainLater": "Please try again later."
   }
 }

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, FlatList } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -12,14 +12,32 @@ import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
 import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParams } from '../../App';
+import { InstagramPostModelAPI } from '../models/PostModelAPI';
 
 const HomeScreen = () => {
-  const navigation = useNavigation();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
+    //console.log(JSON.stringify(authState.post));
+    console.log('1');
     if (authState.post != null) {
-      navigation.navigate('PostScreen');
+      console.log('2');
+      const post: InstagramPostModelAPI = authState.post;
+      console.log('3');
+      if (post.status === 'error') {
+        displayMessage(
+          'error',
+          i18next.t('SystemError'),
+          i18next.t('PleaseTryAgainLater'),
+        );
+      } else {
+        console.log('4');
+        navigation.navigate('PostScreen');
+      }
     }
   }, [authState.post]);
 
@@ -42,7 +60,7 @@ const HomeScreen = () => {
         : postLink.split('/reel/');
       const shortCode = array[1].split('/')[0];
       console.log('shortCode --> ' + shortCode);
-      //authContext.getPost({ payload: shortCode });
+      authContext.getPost({ payload: shortCode });
     } else {
       displayMessage(
         'error',
@@ -114,7 +132,7 @@ const HomeScreen = () => {
         }}>
         <Button
           textColor="black"
-          text={i18next.t('GoToPost')}
+          text={i18next.t('GoToPost')!}
           onPress={goToPost}
         />
       </View>
