@@ -1,6 +1,6 @@
 import { DefaultTFuncReturn } from 'i18next';
 import React from 'react';
-import { Pressable, StyleSheet, Text, PressableProps } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -29,11 +29,11 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <Pressable
+    <TouchableOpacity
       style={[styles.container, { backgroundColor: getButtonColor(status) }]}
       onPress={onPress}>
       <Text style={[styles.buttonText, { color: textColor }]}>{text}</Text>
-    </Pressable>
+    </TouchableOpacity>
   );
 };
 
