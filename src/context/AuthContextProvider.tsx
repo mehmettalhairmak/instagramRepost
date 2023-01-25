@@ -4,12 +4,14 @@ import { getMedia } from '../api/instagram';
 const initialState = {
   user: null,
   post: null,
+  postCurrentImage: null,
 };
 
 export const AuthContext = React.createContext({
   authContext: {
     creditUpdate: (data: Object) => {},
-    getPost: (link: Object) => {},
+    getPost: async (data: Object) => {},
+    changePostCurrentImage: (data: Object) => {},
   },
   authState: {
     ...initialState,
@@ -30,6 +32,11 @@ const AuthContextProvider = (props: { children: React.ReactElement }) => {
             ...prevState,
             post: action.payload,
           };
+        case 'changePostCurrentImage':
+          return {
+            ...prevState,
+            postCurrentImage: action.payload,
+          };
         default:
           break;
       }
@@ -39,12 +46,15 @@ const AuthContextProvider = (props: { children: React.ReactElement }) => {
 
   const authContext = React.useMemo(
     () => ({
-      creditUpdate: async data => {
+      creditUpdate: data => {
         dispatch({ type: 'sync', payload: data.payload });
       },
-      getPost: async link => {
-        const post = await getMedia(link.payload);
+      getPost: async data => {
+        const post = await getMedia(data.payload);
         dispatch({ type: 'getPost', payload: post });
+      },
+      changePostCurrentImage: data => {
+        dispatch({ type: 'changePostCurrentImage', payload: data.payload });
       },
     }),
     [],
