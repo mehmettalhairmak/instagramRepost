@@ -53,8 +53,7 @@ const HomeScreen = () => {
   const goToPost = async () => {
     setLoading(true);
     console.log('after setLoadingScreen');
-    const postLink =
-      'https://www.instagram.com/p/CnKR2auDLdS/?utm_source=ig_web_copy_link'; //await Clipboard.getString();
+    const postLink = await Clipboard.getString();
     console.log('after setLoadingScreen 2 / postLink');
 
     if (
