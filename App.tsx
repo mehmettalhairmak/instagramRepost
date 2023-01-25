@@ -11,7 +11,7 @@ export type RootStackParams = {
   LoginScreen: any;
   HomeScreen: any;
   PostScreen: any;
-}
+};
 
 const Stack = createNativeStackNavigator<RootStackParams>();
 
