@@ -1,3 +1,4 @@
+import { DefaultTFuncReturn } from 'i18next';
 import React from 'react';
 import { StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {
@@ -5,8 +6,20 @@ import {
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 
-export default Button = ({ status, textColor, text, onPress }) => {
-  const getButtonColor = status => {
+interface ButtonProps {
+  status?: 'save';
+  text?: string | DefaultTFuncReturn;
+  textColor?: string;
+  onPress: () => void;
+}
+
+const Button: React.FC<ButtonProps> = ({
+  status = '',
+  text = '',
+  textColor = 'white',
+  onPress,
+}) => {
+  const getButtonColor = (status: string) => {
     switch (status) {
       case 'save':
         return '#ADA2FF';
@@ -19,9 +32,7 @@ export default Button = ({ status, textColor, text, onPress }) => {
     <TouchableOpacity
       style={[styles.container, { backgroundColor: getButtonColor(status) }]}
       onPress={onPress}>
-      <Text style={[styles.buttonText, { color: textColor ?? 'white' }]}>
-        {text}
-      </Text>
+      <Text style={[styles.buttonText, { color: textColor }]}>{text}</Text>
     </TouchableOpacity>
   );
 };
@@ -46,3 +57,5 @@ const styles = StyleSheet.create({
     fontFamily: 'Roboto-Bold',
   },
 });
+
+export default Button;

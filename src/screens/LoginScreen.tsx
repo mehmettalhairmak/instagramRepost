@@ -1,7 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
-import CookieManager from '@react-native-cookies/cookies';
 import {
   INSTAGRAM_APP_ID,
   INSTAGRAM_APP_SECRET,
@@ -13,17 +12,22 @@ import {
 } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
+import { AuthContext } from '../context/AuthContextProvider';
+import i18next from 'i18next';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParams } from '../../App';
 
 const LoginScreen = () => {
-  const insRef = useRef();
-  const [currentUser, setCurrentUser] = useState(null);
-  const navigation = useNavigation();
+  const insRef = useRef<any>();
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
-    if (currentUser != null) {
-      navigation.navigate('HomeScreen', { item: currentUser });
+    if (authState.user != null) {
+      navigation.navigate('HomeScreen');
     }
-  }, [currentUser]);
+  }, [authState.user]);
 
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
@@ -36,7 +40,7 @@ const LoginScreen = () => {
       </View>
       <View style={styles.login}>
         <Button
-          text="Login With Instagram"
+          text={i18next.t('LoginWithInstagram')}
           textColor="black"
           onPress={() => insRef.current.show()}
         />
@@ -47,8 +51,10 @@ const LoginScreen = () => {
         appSecret={INSTAGRAM_APP_SECRET}
         redirectUrl={REDIRECT_URL}
         scopes={['user_profile', 'user_media']}
-        onLoginSuccess={token => setCurrentUser(token)}
-        onLoginFailure={data => console.log('login_error ---> ', data)}
+        onLoginSuccess={(user: any) =>
+          authContext.creditUpdate({ payload: user })
+        }
+        onLoginFailure={(data: any) => console.log('login_error ---> ', data)}
       />
     </View>
   );

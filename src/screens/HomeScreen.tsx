@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, FlatList } from 'react-native';
-import { useNavigation, useRoute } from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
@@ -10,35 +10,72 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
+import { AuthContext } from '../context/AuthContextProvider';
+import i18next from 'i18next';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParams } from '../../App';
+import { InstagramPostModelAPI } from '../models/PostModelAPI';
+import Loading from '../components/Loading';
 
 const HomeScreen = () => {
-  const navigationRoute = useRoute();
-  const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
+  const navigation =
+    useNavigation<NativeStackNavigationProp<RootStackParams>>();
+  const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
-    console.log(navigationRoute?.params?.item);
-  }, [navigationRoute]);
+    if (authState?.post != null) {
+      console.log('2');
+      const post: InstagramPostModelAPI = authState.post;
+      if (post.status === 'error') {
+        setLoading(false);
+        console.log('postError');
+        displayMessage(
+          'error',
+          i18next.t('SystemError'),
+          i18next.t('PleaseTryAgainLater'),
+        );
+      } else {
+        setLoading(false);
+        console.log('3');
+        navigation.navigate('PostScreen');
+      }
+    }
+  }, [authState.post]);
 
   const postRules = [
-    { title: 'Open Instagram.' },
-    { title: 'Find the post you want to save.' },
-    { title: 'Tap ••• in the upper right corner and select <<Link>>' },
-    { title: 'Return app and click Go To Post button.' },
+    { title: i18next.t('OpenInstagram') },
+    { title: i18next.t('FindThePostYouWantToSave') },
+    { title: i18next.t('TapDotsInTheUpperRightCornerAndSelectLink') },
+    { title: i18next.t('ReturnAppAndClickGoToPostButton') },
   ];
 
   const goToPost = async () => {
-    const postLink = await Clipboard.getString();
-    console.log(postLink);
+    setLoading(true);
+    console.log('after setLoadingScreen');
+    const postLink =
+      'https://www.instagram.com/p/CnKR2auDLdS/?utm_source=ig_web_copy_link'; //await Clipboard.getString();
+    console.log('after setLoadingScreen 2 / postLink');
+
     if (
       postLink.includes('https://www.instagram.com/p/') ||
       postLink.includes('https://www.instagram.com/reel/')
     ) {
-      navigation.navigate('PostScreen', { item: postLink });
+      console.log('1');
+      let array = postLink.includes('/p')
+        ? postLink.split('/p/')
+        : postLink.split('/reel/');
+      const shortCode = array[1].split('/')[0];
+      console.log('before 2');
+      await authContext.getPost({ payload: shortCode });
+      console.log('get post passed --> ', authState.post);
     } else {
+      setLoading(false);
+      console.log('linkError');
       displayMessage(
         'error',
-        'Error',
-        'This is not instagram post or reel link',
+        i18next.t('Error'),
+        i18next.t('ThisIsNotInstagramPostOrReelLink'),
       );
     }
   };
@@ -47,7 +84,7 @@ const HomeScreen = () => {
     <SafeAreaView style={styles.container}>
       {/* Screen Header */}
       <View style={{ width: wp(100), height: hp(8) }}>
-        <ScreenHeader title="Home Screen" />
+        <ScreenHeader title={i18next.t('HomeScreen')} />
       </View>
       {/* User Guide */}
       <View
@@ -73,7 +110,7 @@ const HomeScreen = () => {
             <Text
               allowFontScaling={false}
               style={{ fontFamily: 'Roboto-Bold', fontSize: hp(3.4) }}>
-              How To Get Post?
+              {i18next.t('HowToGetPost')}
             </Text>
           )}
           renderItem={({ item, index }) => (
@@ -103,8 +140,13 @@ const HomeScreen = () => {
           justifyContent: 'center',
           borderColor: 'red',
         }}>
-        <Button textColor="black" text="Go To Post" onPress={goToPost} />
+        <Button
+          textColor="black"
+          text={i18next.t('GoToPost')!}
+          onPress={goToPost}
+        />
       </View>
+      <Loading visible={loading} />
     </SafeAreaView>
   );
 };

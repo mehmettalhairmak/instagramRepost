@@ -1,3 +1,4 @@
+import i18next from 'i18next';
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import {
@@ -21,7 +22,7 @@ const InfoPostCard = () => {
               fontSize: hp(2.1),
               fontFamily: 'Roboto-Bold',
             }}>
-            username
+            {i18next.t('Username')}
           </Text>
         </View>
         {/* Icon */}
