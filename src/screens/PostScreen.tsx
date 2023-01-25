@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -7,6 +7,7 @@ import {
   Text,
   PermissionsAndroid,
   TouchableOpacity,
+  ActivityIndicator,
 } from 'react-native';
 import PostCard from '../components/PostCard';
 import Button from '../components/Button';
@@ -21,20 +22,20 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import i18next from 'i18next';
 import InstagramModal from '../components/InstagramModal';
-//import { PostAPI } from '../models/PostModelAPI';
 import { InstagramPostModelCache } from '../models/PostModelCache';
 import { CarouselMedia, InstagramPostModelAPI } from '../models/PostModelAPI';
-
-var RNFS = require('react-native-fs');
+import RNFS from 'react-native-fs';
 
 const PostScreen = () => {
+  const [downloading, setDownloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
   const { authState, authContext } = useContext(AuthContext);
   const post: InstagramPostModelAPI = authState.post!;
+  let postCurrentImage: InstagramPostModelCache = authState.postCurrentImage!;
 
   useEffect(() => {
-    console.log('postScreen');
-    console.log(JSON.stringify(post));
+    console.log('poostt --> ' + authState.post);
+    authContext.setLoadingScreen({ payload: false });
   }, []);
 
   const contentImages = () => {
@@ -94,38 +95,53 @@ const PostScreen = () => {
     );
   };
 
-  const saveImages = async () => {
-    console.log('multiple');
+  const saveImages = async (single?: boolean) => {
+    setDownloading(true);
     setModalVisible(false);
+    if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
+      return;
+    }
 
-    // if (Platform.OS === 'android' && !(await hasAndroidPermission())) {
-    //   return;
-    // }
+    if (contentImages().length === 1) {
+      save(contentImages()[0], contentImages()[0].isVideo ? '.mp4' : '.png');
+    } else if (contentImages().length > 1) {
+      if (single) {
+        save(postCurrentImage, postCurrentImage.isVideo ? '.mp4' : '.png');
+      } else {
+        contentImages().map((item, index) => {
+          save(item, item.isVideo ? '.mp4' : '.png');
+        });
+      }
+    }
+    setDownloading(false);
+    displayMessage(
+      'success',
+      i18next.t('Success'),
+      i18next.t('TheMediaHasBeenSuccessfullySavedToTheGallery'),
+    );
+  };
 
-    // const date = new Date();
-    // const time = date.getTime();
+  const save = (data: InstagramPostModelCache, pathFileType: string) => {
+    const date = new Date();
+    const time = date.getTime();
 
-    // const path = RNFS.DocumentDirectoryPath + '/' + time + '.mp4';
+    const path = RNFS.DocumentDirectoryPath + '/' + time + pathFileType;
 
-    // RNFS.downloadFile({
-    //   fromUrl: 'http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',
-    //   toFile: path,
-    //   cacheable: true,
-    //   progressInterval: 100,
-    //   begin: () => {
-    //     console.log('download start');
-    //   },
-    // }).promise.then(result => {
-    //   console.log('download finished --> ', path);
-    //   CameraRoll.save(path, 'video').then(result => {
-    //     console.log(result);
-    //     displayMessage(
-    //       'success',
-    //       i18next.t('Success'),
-    //       i18next.t('TheMediaHasBeenSuccessfullySavedToTheGallery'),
-    //     );
-    //   });
-    // });
+    RNFS.downloadFile({
+      fromUrl: data.src,
+      toFile: path,
+      cacheable: true,
+      progressInterval: 100,
+      begin: () => {
+        console.log('download start');
+      },
+    }).promise.then(result => {
+      CameraRoll.save(path, { type: 'auto', album: 'instagramRepost' }).then(
+        result => {
+          console.log('Saved to gallery --> ' + result);
+        },
+      );
+    });
   };
 
   return (
@@ -144,12 +160,16 @@ const PostScreen = () => {
         />
       </View>
       <View style={styles.buttonContainer}>
-        <Button
-          status="save"
-          textColor="white"
-          text={i18next.t('Save')}
-          onPress={() => setModalVisible(true)}
-        />
+        {downloading ? (
+          <ActivityIndicator size="large" color="#0000ff" />
+        ) : (
+          <Button
+            status="save"
+            textColor="white"
+            text={i18next.t('Save')}
+            onPress={() => setModalVisible(true)}
+          />
+        )}
       </View>
       <InstagramModal
         visible={modalVisible}
@@ -203,7 +223,7 @@ const PostScreen = () => {
               ]}
               onPress={() =>
                 contentImages().length > 1
-                  ? saveImages()
+                  ? saveImages(true)
                   : setModalVisible(false)
               }>
               <Text allowFontScaling={false} style={styles.modalButtonText}>
@@ -214,7 +234,7 @@ const PostScreen = () => {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.modalButtonLayout, { backgroundColor: 'green' }]}
-              onPress={saveImages}>
+              onPress={() => saveImages()}>
               <Text style={styles.modalButtonText}>
                 {contentImages().length > 1
                   ? i18next.t('AllMedia')
