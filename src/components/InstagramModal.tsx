@@ -2,10 +2,13 @@ import React from 'react';
 import { StyleSheet, View, Modal, ModalProps } from 'react-native';
 
 interface InstagramModalProps extends ModalProps {
-  children: React.ReactElement
+  children: React.ReactElement;
 }
 
-const InstagramModal: React.FC<InstagramModalProps> = ({children, ...props}) => {
+const InstagramModal: React.FC<InstagramModalProps> = ({
+  children,
+  ...props
+}) => {
   return (
     <Modal animationType="slide" transparent={false} {...props}>
       <View
