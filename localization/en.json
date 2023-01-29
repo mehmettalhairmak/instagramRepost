@@ -24,6 +24,8 @@
     "Yes": "Yes",
     "No": "No",
     "SystemError": "System Error",
-    "PleaseTryAgainLater": "Please try again later."
+    "PleaseTryAgainLater": "Please try again later.",
+    "PlaceListScreen": "Place List",
+    "PlaceDetailScreen": "Place Details"
   }
 }
