@@ -16,6 +16,7 @@ import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
+import { isDebug } from '../constants/general';
 
 const LoginScreen = () => {
   const insRef = useRef<any>();
@@ -25,7 +26,11 @@ const LoginScreen = () => {
 
   useEffect(() => {
     if (authState.user != null) {
-      navigation.navigate('HomeScreen');
+      if (isDebug) {
+        navigation.navigate('PlaceListScreen');
+      } else {
+        navigation.navigate('HomeScreen');
+      }
     }
   }, [authState.user]);
 
