@@ -24,6 +24,10 @@
     "Yes": "Evet",
     "No": "Hayır",
     "SystemError": "Sistem Hatası",
-    "PleaseTryAgainLater": "Lütfen daha sonra tekrar deneyin."
+    "PleaseTryAgainLater": "Lütfen daha sonra tekrar deneyin.",
+    "PlaceListScreen": "Konumlar",
+    "PlaceDetailScreen": "Konum Detayları",
+    "ThisAccountIsPrivate": "Bu kullanıcı hesabı gizli.",
+    "PleaseSelectPublicAccountPosts":"Lütfen herkese açık profillerin gönderilerini seçin."
   }
 }

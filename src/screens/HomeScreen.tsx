@@ -16,6 +16,8 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { InstagramPostModelAPI } from '../models/PostModelAPI';
 import Loading from '../components/Loading';
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
@@ -24,23 +26,33 @@ const HomeScreen = () => {
   const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
-    if (authState?.post != null) {
-      console.log('2');
-      const post: InstagramPostModelAPI = authState.post;
-      if (post.status === 'error') {
-        setLoading(false);
-        console.log('postError');
-        displayMessage(
-          'error',
-          i18next.t('SystemError'),
-          i18next.t('PleaseTryAgainLater'),
-        );
-      } else {
-        setLoading(false);
-        console.log('3');
-        navigation.navigate('PostScreen');
+    (async () => {
+      if (authState?.post != null) {
+        const post: InstagramPostModelAPI = authState.post;
+        if (post.status === 'error') {
+          if (post.error === 'Media not found or unavailable') {
+            displayMessage(
+              'error',
+              i18next.t('ThisAccountIsPrivate'),
+              i18next.t('PleaseSelectPublicAccountPosts'),
+            );
+          } else {
+            setLoading(false);
+            displayMessage(
+              'error',
+              i18next.t('SystemError'),
+              i18next.t('PleaseTryAgainLater'),
+            );
+            const time = moment().add(10, 'minute');
+            await AsyncStorage.setItem('@postTimeout', JSON.stringify(time));
+          }
+        } else {
+          await AsyncStorage.removeItem('@postTimeout');
+          setLoading(false);
+          navigation.navigate('PostScreen');
+        }
       }
-    }
+    })();
   }, [authState.post]);
 
   const postRules = [
@@ -50,32 +62,43 @@ const HomeScreen = () => {
     { title: i18next.t('ReturnAppAndClickGoToPostButton') },
   ];
 
-  const goToPost = async () => {
+  const post = async () => {
     setLoading(true);
-    console.log('after setLoadingScreen');
     const postLink = await Clipboard.getString();
-    console.log('after setLoadingScreen 2 / postLink');
 
     if (
       postLink.includes('https://www.instagram.com/p/') ||
       postLink.includes('https://www.instagram.com/reel/')
     ) {
-      console.log('1');
       let array = postLink.includes('/p')
         ? postLink.split('/p/')
         : postLink.split('/reel/');
       const shortCode = array[1].split('/')[0];
-      console.log('before 2');
       await authContext.getPost({ payload: shortCode });
-      console.log('get post passed --> ', authState.post);
     } else {
       setLoading(false);
-      console.log('linkError');
       displayMessage(
         'error',
         i18next.t('Error'),
         i18next.t('ThisIsNotInstagramPostOrReelLink'),
       );
+    }
+  };
+
+  const goToPost = async () => {
+    const timeOutString = await AsyncStorage.getItem('@postTimeout');
+    if (timeOutString !== null) {
+      if (moment().isAfter(timeOutString)) {
+        post();
+      } else {
+        displayMessage(
+          'error',
+          i18next.t('SystemError'),
+          i18next.t('PleaseTryAgainLater'),
+        );
+      }
+    } else {
+      post();
     }
   };
 
