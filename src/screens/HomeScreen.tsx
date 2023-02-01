@@ -30,14 +30,22 @@ const HomeScreen = () => {
       if (authState?.post != null) {
         const post: InstagramPostModelAPI = authState.post;
         if (post.status === 'error') {
-          setLoading(false);
-          displayMessage(
-            'error',
-            i18next.t('SystemError'),
-            i18next.t('PleaseTryAgainLater'),
-          );
-          const time = moment().add(10, 'minute');
-          await AsyncStorage.setItem('@postTimeout', JSON.stringify(time));
+          if (post.error === 'Media not found or unavailable') {
+            displayMessage(
+              'error',
+              i18next.t('ThisAccountIsPrivate'),
+              i18next.t('PleaseSelectPublicAccountPosts'),
+            );
+          } else {
+            setLoading(false);
+            displayMessage(
+              'error',
+              i18next.t('SystemError'),
+              i18next.t('PleaseTryAgainLater'),
+            );
+            const time = moment().add(10, 'minute');
+            await AsyncStorage.setItem('@postTimeout', JSON.stringify(time));
+          }
         } else {
           await AsyncStorage.removeItem('@postTimeout');
           setLoading(false);

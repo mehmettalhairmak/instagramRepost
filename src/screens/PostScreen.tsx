@@ -35,7 +35,6 @@ const PostScreen = () => {
 
   useEffect(() => {
     console.log('poostt --> ' + authState.post);
-    authContext.setLoadingScreen({ payload: false });
   }, []);
 
   const contentImages = () => {
@@ -113,12 +112,6 @@ const PostScreen = () => {
         });
       }
     }
-    setDownloading(false);
-    displayMessage(
-      'success',
-      i18next.t('Success'),
-      i18next.t('TheMediaHasBeenSuccessfullySavedToTheGallery'),
-    );
   };
 
   const save = (data: InstagramPostModelCache, pathFileType: string) => {
@@ -139,6 +132,13 @@ const PostScreen = () => {
       CameraRoll.save(path, { type: 'auto', album: 'instagramRepost' }).then(
         result => {
           console.log('Saved to gallery --> ' + result);
+          setDownloading(false);
+
+          displayMessage(
+            'success',
+            i18next.t('Success'),
+            i18next.t('TheMediaHasBeenSuccessfullySavedToTheGallery'),
+          );
         },
       );
     });

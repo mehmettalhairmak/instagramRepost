@@ -26,6 +26,8 @@
     "SystemError": "System Error",
     "PleaseTryAgainLater": "Please try again later.",
     "PlaceListScreen": "Place List",
-    "PlaceDetailScreen": "Place Details"
+    "PlaceDetailScreen": "Place Details",
+    "ThisAccountIsPrivate": "This account is private.",
+    "PleaseSelectPublicAccountPosts":"Please select the public account posts"
   }
 }
