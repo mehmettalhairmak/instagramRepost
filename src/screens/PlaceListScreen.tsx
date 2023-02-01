@@ -84,7 +84,7 @@ const PlaceListScreen = () => {
               placesArray.push(data);
             }
           });
-          console.log(JSON.stringify(placesArray));
+          //console.log(JSON.stringify(placesArray));
           setPlaces(placesArray);
         }
       }

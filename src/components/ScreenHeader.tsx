@@ -11,6 +11,7 @@ import CookieManager from '@react-native-cookies/cookies';
 import { AuthContext } from '../context/AuthContextProvider';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface ScreenHeaderProps {
   title: string;
@@ -25,7 +26,8 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const { authContext } = useContext(AuthContext);
 
-  const signOut = () => {
+  const signOut = async () => {
+    await AsyncStorage.removeItem('@currentUser');
     CookieManager.clearAll(true).then(res => {
       authContext.creditUpdate({ payload: null });
       navigation.navigate('LoginScreen');

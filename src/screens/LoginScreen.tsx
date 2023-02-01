@@ -17,12 +17,31 @@ import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { isDebug } from '../constants/general';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
 
 const LoginScreen = () => {
   const insRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
   const { authState, authContext } = useContext(AuthContext);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const currentUserString = await AsyncStorage.getItem('@currentUser');
+        if (currentUserString !== null) {
+          const currentUser = JSON.parse(currentUserString);
+          const availableLoginTimeLimit = currentUser.availableLoginTimeLimit;
+          if (moment().isBefore(availableLoginTimeLimit)) {
+            authContext.creditUpdate({ payload: currentUser });
+          }
+        }
+      } catch (error) {
+        console.log('AsyncStorage LoginScreen GetItem Error ---> ', error);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (authState.user != null) {
@@ -33,6 +52,22 @@ const LoginScreen = () => {
       }
     }
   }, [authState.user]);
+
+  const onLoginSuccess = async (user: any) => {
+    let storageLoginData = user;
+
+    let availableLoginTimeLimit = moment().add(1, 'hour');
+    storageLoginData.availableLoginTime = availableLoginTimeLimit;
+    try {
+      await AsyncStorage.setItem(
+        '@currentUser',
+        JSON.stringify(storageLoginData),
+      );
+    } catch (error) {
+      console.log('AsyncStorage LoginScreen SetItem Error ---> ', error);
+    }
+    authContext.creditUpdate({ payload: user });
+  };
 
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
@@ -56,9 +91,7 @@ const LoginScreen = () => {
         appSecret={INSTAGRAM_APP_SECRET}
         redirectUrl={REDIRECT_URL}
         scopes={['user_profile', 'user_media']}
-        onLoginSuccess={(user: any) =>
-          authContext.creditUpdate({ payload: user })
-        }
+        onLoginSuccess={onLoginSuccess}
         onLoginFailure={(data: any) => console.log('login_error ---> ', data)}
       />
     </View>
