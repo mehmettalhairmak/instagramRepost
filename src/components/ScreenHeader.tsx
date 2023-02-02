@@ -1,11 +1,12 @@
 import React, { useContext } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import CookieManager from '@react-native-cookies/cookies';
 import { AuthContext } from '../context/AuthContextProvider';
@@ -16,11 +17,13 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 interface ScreenHeaderProps {
   title: string;
   isBackTrue?: boolean;
+  deleteUser?: boolean;
 }
 
 const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   title,
   isBackTrue = false,
+  deleteUser = false,
 }) => {
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -34,6 +37,22 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
     });
   };
 
+  const deleteAccount = () => {
+    Alert.alert('Delete Account', 'Are you sure want to delete account?', [
+      { text: 'NO' },
+      {
+        text: 'YES',
+        onPress: async () => {
+          await AsyncStorage.removeItem('@currentUser');
+          CookieManager.clearAll(true).then(res => {
+            authContext.creditUpdate({ payload: null });
+            navigation.navigate('LoginScreen');
+          });
+        },
+      },
+    ]);
+  };
+
   return (
     <View style={styles.container}>
       <View
@@ -45,6 +64,11 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
           <TouchableOpacity
             onPress={() => navigation.canGoBack() && navigation.goBack()}>
             <Ionicons name="chevron-back-sharp" size={hp(4.4)} />
+          </TouchableOpacity>
+        )}
+        {deleteUser && (
+          <TouchableOpacity onPress={deleteAccount}>
+            <AntDesign name="deleteuser" size={hp(4.4)} color="red" />
           </TouchableOpacity>
         )}
       </View>
