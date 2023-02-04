@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useEffect, useRef, useContext, useState } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
 import {
@@ -16,11 +16,12 @@ import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
-import { isDebug } from '../constants/general';
+import { checkIsDebug } from '../constants/general';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
 
 const LoginScreen = () => {
+  let isDebug: boolean;
   const insRef = useRef<any>();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
@@ -44,13 +45,18 @@ const LoginScreen = () => {
   }, []);
 
   useEffect(() => {
-    if (authState.user != null) {
-      if (isDebug) {
-        navigation.navigate('PlaceListScreen');
-      } else {
-        navigation.navigate('HomeScreen');
+    (async () => {
+      const result = await checkIsDebug();
+      isDebug = result.isDebug;
+      if (authState.user != null) {
+        if (isDebug) {
+          console.log('debug mode');
+          navigation.navigate('PlaceListScreen');
+        } else {
+          navigation.navigate('HomeScreen');
+        }
       }
-    }
+    })();
   }, [authState.user]);
 
   const onLoginSuccess = async (user: any) => {

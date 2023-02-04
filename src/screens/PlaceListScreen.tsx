@@ -178,7 +178,7 @@ const PlaceListScreen = () => {
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ width: wp(100), height: hp(8) }}>
-          <ScreenHeader title={i18next.t('PlaceListScreen')} />
+          <ScreenHeader title={i18next.t('PlaceListScreen')} deleteUser />
         </View>
         <FlatList
           style={{ borderWidth: 1, width: '100%', height: '100%' }}

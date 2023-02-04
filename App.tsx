@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Toast from 'react-native-toast-message';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { NavigationContainer } from '@react-navigation/native';
@@ -8,7 +8,7 @@ import PostScreen from './src/screens/PostScreen';
 import PlaceListScreen from './src/screens/PlaceListScreen';
 import AuthContextProvider from './src/context/AuthContextProvider';
 import PlaceDetailScreen from './src/screens/PlaceDetailScreen';
-import { isDebug } from './src/constants/general';
+import { checkIsDebug } from './src/constants/general';
 
 export type RootStackParams = {
   LoginScreen: any;
@@ -21,6 +21,15 @@ export type RootStackParams = {
 const Stack = createNativeStackNavigator<RootStackParams>();
 
 const App = () => {
+  let isDebug;
+  useEffect(() => {
+    (async () => {
+      const result = await checkIsDebug();
+      console.log(result.isDebug);
+      isDebug = result.isDebug;
+    })();
+  }, []);
+
   return (
     <AuthContextProvider>
       <NavigationContainer>
@@ -28,13 +37,10 @@ const App = () => {
           initialRouteName="LoginScreen"
           screenOptions={{ headerShown: false }}>
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          {isDebug !== true ? (
-            <>
+          
               <Stack.Screen name="HomeScreen" component={HomeScreen} />
               <Stack.Screen name="PostScreen" component={PostScreen} />
-            </>
-          ) : (
-            <>
+            
               <Stack.Screen
                 name="PlaceListScreen"
                 component={PlaceListScreen}
@@ -43,8 +49,7 @@ const App = () => {
                 name="PlaceDetailScreen"
                 component={PlaceDetailScreen}
               />
-            </>
-          )}
+            
         </Stack.Navigator>
         <Toast />
       </NavigationContainer>
