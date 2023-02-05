@@ -54,7 +54,7 @@ const LoginScreen = () => {
       const result = await checkIsDebug();
       isDebug = result.isDebug;
       if (authUser.access_token !== '') {
-        if (!isDebug) {
+        if (isDebug) {
           console.log('debug mode');
           navigation.navigate('PlaceListScreen');
         } else {
@@ -86,7 +86,7 @@ const LoginScreen = () => {
         <Text
           allowFontScaling={false}
           style={{ fontFamily: 'Roboto-Bold', fontSize: hp(3.4) }}>
-          Instagram Repost
+          Travel Places
         </Text>
       </View>
       <View style={styles.login}>

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
 import {
   heightPercentageToDP as hp,
@@ -9,10 +9,11 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import CookieManager from '@react-native-cookies/cookies';
-import { AuthContext } from '../context/AuthContextProvider';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppDispatch } from '../hooks';
+import { setAuthUser } from '../redux/slices/authUser/authUserSlice';
 
 interface ScreenHeaderProps {
   title: string;
@@ -25,14 +26,20 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   isBackTrue = false,
   deleteUser = false,
 }) => {
+  const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const { authContext } = useContext(AuthContext);
 
   const signOut = async () => {
     await AsyncStorage.removeItem('@currentUser');
     CookieManager.clearAll(true).then(res => {
-      authContext.creditUpdate({ payload: null });
+      dispatch(
+        setAuthUser({
+          access_token: '',
+          user_id: '',
+          availableLoginTimeLimit: '',
+        }),
+      );
       navigation.navigate('LoginScreen');
     });
   };
@@ -45,7 +52,13 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         onPress: async () => {
           await AsyncStorage.removeItem('@currentUser');
           CookieManager.clearAll(true).then(res => {
-            authContext.creditUpdate({ payload: null });
+            dispatch(
+              setAuthUser({
+                access_token: '',
+                user_id: '',
+                availableLoginTimeLimit: '',
+              }),
+            );
             navigation.navigate('LoginScreen');
           });
         },
