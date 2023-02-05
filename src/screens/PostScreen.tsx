@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   SafeAreaView,
   View,
@@ -17,29 +17,26 @@ import {
 } from 'react-native-responsive-screen';
 import ScreenHeader from '../components/ScreenHeader';
 import { CameraRoll } from '@react-native-camera-roll/camera-roll';
-import { AuthContext } from '../context/AuthContextProvider';
 import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import i18next from 'i18next';
 import InstagramModal from '../components/InstagramModal';
 import { InstagramPostModelCache } from '../models/PostModelCache';
-import { CarouselMedia, InstagramPostModelAPI } from '../models/PostModelAPI';
+import { CarouselMedia } from '../redux/slices/instagramMedia/models';
 import RNFS from 'react-native-fs';
+import { selectMedia } from '../redux/slices/instagramMedia/instagramMediaSlice';
+import { useAppSelector } from '../hooks';
+import { selectCurrentImage } from '../redux/slices/currentImage/currentImageSlice';
 
 const PostScreen = () => {
+  const media = useAppSelector(selectMedia);
+  const currentImage = useAppSelector(selectCurrentImage);
   const [downloading, setDownloading] = useState<boolean>(false);
   const [modalVisible, setModalVisible] = useState<boolean>(false);
-  const { authState, authContext } = useContext(AuthContext);
-  const post: InstagramPostModelAPI = authState.post!;
-  let postCurrentImage: InstagramPostModelCache = authState.postCurrentImage!;
-
-  useEffect(() => {
-    console.log('poostt --> ' + authState.post);
-  }, []);
 
   const contentImages = () => {
+    const postObject = media.media;
     let content: InstagramPostModelCache[] = [];
-    const postObject = post;
     if (postObject?.product_type === 'feed') {
       content.push({
         isVideo: false,
@@ -85,7 +82,7 @@ const PostScreen = () => {
   };
 
   const saveCaption = () => {
-    let caption = post.caption != null ? post.caption.text : '';
+    let caption = media.media?.caption != null ? media.media?.caption.text : '';
     Clipboard.setString(caption);
     displayMessage(
       'success',
@@ -105,7 +102,7 @@ const PostScreen = () => {
       save(contentImages()[0], contentImages()[0].isVideo ? '.mp4' : '.png');
     } else if (contentImages().length > 1) {
       if (single) {
-        save(postCurrentImage, postCurrentImage.isVideo ? '.mp4' : '.png');
+        save(currentImage, currentImage.isVideo ? '.mp4' : '.png');
       } else {
         contentImages().map((item, index) => {
           save(item, item.isVideo ? '.mp4' : '.png');
@@ -151,11 +148,15 @@ const PostScreen = () => {
       </View>
       <View style={styles.cardContainer}>
         <PostCard
-          avatar={post?.user.profile_pic_url}
-          username={post?.user.username}
-          location={post?.location != undefined ? post.location.name : ''}
+          avatar={media?.media!.user.profile_pic_url}
+          username={media?.media!.user.username}
+          location={
+            media?.media!.location != undefined ? media.media.location.name : ''
+          }
           content={contentImages()}
-          caption={post?.caption != null ? post?.caption.text : ''}
+          caption={
+            media?.media!.caption != null ? media.media?.caption.text : ''
+          }
           captionOnPress={saveCaption}
         />
       </View>

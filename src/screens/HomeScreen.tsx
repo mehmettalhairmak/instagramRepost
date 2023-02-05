@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View, Text, FlatList } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import {
@@ -10,27 +10,30 @@ import Clipboard from '@react-native-clipboard/clipboard';
 import { displayMessage } from '../helpers';
 import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
-import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
-import { InstagramPostModelAPI } from '../models/PostModelAPI';
 import Loading from '../components/Loading';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import {
+  getMediaAsync,
+  selectMedia,
+} from '../redux/slices/instagramMedia/instagramMediaSlice';
 
 const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const { authState, authContext } = useContext(AuthContext);
+  const dispatch = useAppDispatch();
+  const media = useAppSelector(selectMedia);
 
   useEffect(() => {
     (async () => {
-      if (authState?.post != null) {
-        const post: InstagramPostModelAPI = authState.post;
-        if (post.status === 'error') {
-          if (post.error === 'Media not found or unavailable') {
+      if (media.media !== null) {
+        if (media.media.status === 'error') {
+          if (media.media.error === 'Media not found or unavailable') {
             displayMessage(
               'error',
               i18next.t('ThisAccountIsPrivate'),
@@ -53,7 +56,7 @@ const HomeScreen = () => {
         }
       }
     })();
-  }, [authState.post]);
+  }, [media]);
 
   const postRules = [
     { title: i18next.t('OpenInstagram') },
@@ -74,7 +77,7 @@ const HomeScreen = () => {
         ? postLink.split('/p/')
         : postLink.split('/reel/');
       const shortCode = array[1].split('/')[0];
-      await authContext.getPost({ payload: shortCode });
+      dispatch(getMediaAsync(shortCode));
     } else {
       setLoading(false);
       displayMessage(

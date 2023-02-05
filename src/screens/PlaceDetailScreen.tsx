@@ -53,7 +53,6 @@ const PlaceDetailScreen = () => {
 
   useEffect(() => {
     (async () => {
-      console.log('XID FROM DETAIL SCREEN --> ' + route.params?.xid);
       const result = await getPlaceDetails(route.params.xid);
       setPlaceDetails(result);
     })();
