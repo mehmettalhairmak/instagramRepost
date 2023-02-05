@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useContext } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   FlatList,
   Image,
@@ -16,7 +16,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import i18next from 'i18next';
 import { InstagramPostModelCache } from '../models/PostModelCache';
-import { AuthContext } from '../context/AuthContextProvider';
+import { useAppDispatch } from '../hooks';
+import { setCurrentImage } from '../redux/slices/currentImage/currentImageSlice';
 
 interface PostCardProps {
   avatar: string;
@@ -35,11 +36,11 @@ const PostCard: React.FC<PostCardProps> = ({
   caption,
   captionOnPress,
 }) => {
+  const dispatch = useAppDispatch();
   const [contentImageWidth, setContentImageWidth] = useState(0);
   const [contentVideoPause, setContentVideoPause] = useState(false);
   const [contentVideoMuted, setContentVideoMuted] = useState(false);
   const viewabilityConfigCallbackPairs = useRef([{ onViewableItemsChanged }]);
-  const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
     return () => {
@@ -48,7 +49,7 @@ const PostCard: React.FC<PostCardProps> = ({
   }, []);
 
   function onViewableItemsChanged({ viewableItems }: { viewableItems: any }) {
-    authContext.changePostCurrentImage({ payload: viewableItems[0].item });
+    dispatch(setCurrentImage(viewableItems[0].item));
     content.map((item: any) => {
       viewableItems[0].item.src == item.src
         ? setContentVideoPause(false)

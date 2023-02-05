@@ -24,6 +24,11 @@ import { RootStackParams } from '../../App';
 import { useNavigation } from '@react-navigation/native';
 import ScreenHeader from '../components/ScreenHeader';
 import i18next from 'i18next';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import {
+  getMediaAsync,
+  selectMedia,
+} from '../redux/slices/instagramMedia/instagramMediaSlice';
 
 interface Places {
   type: string;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useContext, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 import InstagramLogin from 'react-native-instagram-login';
 import {
@@ -12,20 +12,25 @@ import {
 } from 'react-native-responsive-screen';
 import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
-import { AuthContext } from '../context/AuthContextProvider';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParams } from '../../App';
 import { checkIsDebug } from '../constants/general';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
+import { useAppDispatch, useAppSelector } from '../hooks';
+import {
+  selectAuthUser,
+  setAuthUser,
+} from '../redux/slices/authUser/authUserSlice';
 
 const LoginScreen = () => {
   let isDebug: boolean;
   const insRef = useRef<any>();
+  const dispatch = useAppDispatch();
+  const authUser = useAppSelector(selectAuthUser);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const { authState, authContext } = useContext(AuthContext);
 
   useEffect(() => {
     (async () => {
@@ -35,7 +40,7 @@ const LoginScreen = () => {
           const currentUser = JSON.parse(currentUserString);
           const availableLoginTimeLimit = currentUser.availableLoginTimeLimit;
           if (moment().isBefore(availableLoginTimeLimit)) {
-            authContext.creditUpdate({ payload: currentUser });
+            dispatch(setAuthUser(currentUser));
           }
         }
       } catch (error) {
@@ -48,8 +53,8 @@ const LoginScreen = () => {
     (async () => {
       const result = await checkIsDebug();
       isDebug = result.isDebug;
-      if (authState.user != null) {
-        if (isDebug) {
+      if (authUser.access_token !== '') {
+        if (!isDebug) {
           console.log('debug mode');
           navigation.navigate('PlaceListScreen');
         } else {
@@ -57,7 +62,7 @@ const LoginScreen = () => {
         }
       }
     })();
-  }, [authState.user]);
+  }, [authUser]);
 
   const onLoginSuccess = async (user: any) => {
     let storageLoginData = user;
@@ -72,7 +77,7 @@ const LoginScreen = () => {
     } catch (error) {
       console.log('AsyncStorage LoginScreen SetItem Error ---> ', error);
     }
-    authContext.creditUpdate({ payload: user });
+    dispatch(setAuthUser(user));
   };
 
   return (
