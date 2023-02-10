@@ -9,6 +9,7 @@ import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface ParamList extends ParamListBase {
   PlaceDetailScreen: { xid: string };
@@ -76,7 +77,22 @@ const PlaceDetailScreen = () => {
   return (
     <View style={{ flex: 1, alignItems: 'center' }}>
       <View style={{ width: wp(100), height: hp(8) }}>
-        <ScreenHeader title={i18next.t('PlaceDetailScreen')} isBackTrue />
+        <ScreenHeader
+          title={i18next.t('PlaceDetailScreen')}
+          isBackTrue
+          favoritePlace
+          favoriteProcess={async () => {
+            const arrayString: any = await AsyncStorage.getItem(
+              '@favoritePlaces',
+            );
+            const array = JSON.parse(arrayString);
+            array.push(placeDetails);
+            await AsyncStorage.setItem(
+              '@favoritePlaces',
+              JSON.stringify(array),
+            );
+          }}
+        />
       </View>
       {placeDetails?.image !== undefined ? (
         <Image

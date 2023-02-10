@@ -26,43 +26,19 @@ import ScreenHeader from '../components/ScreenHeader';
 import i18next from 'i18next';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import {
-  getMediaAsync,
-  selectMedia,
-} from '../redux/slices/instagramMedia/instagramMediaSlice';
-
-interface Places {
-  type: string;
-  features: Place[];
-}
-
-interface Place {
-  type: string;
-  id: string;
-  geometry: {
-    type: string;
-    coordinates: Array<number>;
-  };
-  properties: PlaceProperty;
-}
-
-interface PlaceProperty {
-  xid: string;
-  name: string;
-  dist: number;
-  rate: number;
-  osm: string;
-  wikidata: string;
-  kinds: number;
-}
+  getPlaceAsync,
+  selectPlace,
+} from '../redux/slices/placeSlices/placeSlice';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const PlaceListScreen = () => {
+  let fetchCount: number = 0;
+  const dispatch = useAppDispatch();
+  const place = useAppSelector(selectPlace);
+  const [location, setLocation] = useState<GeolocationResponse>();
+  const [locationPermission, setLocationPermission] = useState<boolean>(false);
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-
-  const [locationPermission, setLocationPermission] = useState<boolean>(false);
-  const [location, setLocation] = useState<GeolocationResponse>();
-  const [places, setPlaces] = useState<Place[] | undefined>(undefined);
-  let fetchCount: number = 0;
 
   useEffect(() => {
     requestLocationPermission();
@@ -78,22 +54,17 @@ const PlaceListScreen = () => {
     (async () => {
       if (fetchCount < 1) {
         if (location?.coords !== undefined) {
-          let placesArray: Place[] = [];
-          const data: Places = await getPlaces(
-            location.coords.longitude.toString(),
-            location.coords.latitude.toString(),
-          );
-
-          data.features.map((data, index) => {
-            if (data.properties.name !== '') {
-              placesArray.push(data);
-            }
-          });
-          //console.log(JSON.stringify(placesArray));
-          setPlaces(placesArray);
+          dispatch(getPlaceAsync(location.coords));
         }
       }
       fetchCount = fetchCount + 1;
+      const favorites = await AsyncStorage.getItem("@favoritePlaces");
+      console.log("Faav --> ",favorites);
+      if(favorites === null){
+        console.log("1qw")
+        const favoriteArray:any[] = [];
+        await AsyncStorage.setItem("@favoritePlaces", JSON.stringify(favoriteArray));
+      }
     })();
   }, [location]);
 
@@ -149,45 +120,34 @@ const PlaceListScreen = () => {
     );
   };
 
-  const getPlaces = async (longitude: string, latitude: string) => {
-    const link =
-      'https://opentripmap-places-v1.p.rapidapi.com/en/places/radius?radius=10000&lon=' +
-      longitude +
-      '&lat=' +
-      latitude +
-      '&limit=30';
-
-    const options = {
-      method: 'GET',
-      headers: {
-        'X-RapidAPI-Key': '1435b300d1msh32b5f891e102482p12f1f1jsn58c2fb6da7e2',
-        'X-RapidAPI-Host': 'opentripmap-places-v1.p.rapidapi.com',
-      },
-    };
-
-    const result = await fetch(link, options);
-    return await result.json();
-  };
-
   const goToPlaceDetails = (xid: string) => {
     navigation.navigate('PlaceDetailScreen', { xid });
   };
 
-  if (places === undefined) {
+  if (place.status === 'loading') {
+    console.log('1');
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <ActivityIndicator size="large" color="blue" />
       </View>
     );
+  } else if (place.status === 'failed') {
+    console.log('2');
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>NO DATA</Text>
+      </View>
+    );
   } else {
+    console.log('3');
     return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
         <View style={{ width: wp(100), height: hp(8) }}>
-          <ScreenHeader title={i18next.t('PlaceListScreen')} deleteUser />
+          <ScreenHeader title={i18next.t('PlaceListScreen')} />
         </View>
         <FlatList
-          style={{ borderWidth: 1, width: '100%', height: '100%' }}
-          data={places}
+          style={{ width: '100%', height: '100%' }}
+          data={place.filteredPlaces}
           renderItem={({ item }) => (
             <View
               style={{

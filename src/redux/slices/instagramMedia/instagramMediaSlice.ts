@@ -40,7 +40,6 @@ export const instagramMediaSlice = createSlice({
   },
 });
 
-//export const { getMedia } = instagramGetMediaSlice.actions;
 export const selectMedia = (state: RootState) => state.media;
 
 export default instagramMediaSlice.reducer;

@@ -14,7 +14,7 @@ import { useNavigation } from '@react-navigation/native';
 import Button from '../components/Button';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParams } from '../../App';
+import { RootStackParams } from '../navigation/StackNavigation';
 import { checkIsDebug } from '../constants/general';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import moment from 'moment';
@@ -38,8 +38,9 @@ const LoginScreen = () => {
         const currentUserString = await AsyncStorage.getItem('@currentUser');
         if (currentUserString !== null) {
           const currentUser = JSON.parse(currentUserString);
-          const availableLoginTimeLimit = currentUser.availableLoginTimeLimit;
+          const availableLoginTimeLimit = currentUser.availableLoginTime;
           if (moment().isBefore(availableLoginTimeLimit)) {
+            console.log(authUser);
             dispatch(setAuthUser(currentUser));
           }
         }
@@ -53,10 +54,11 @@ const LoginScreen = () => {
     (async () => {
       const result = await checkIsDebug();
       isDebug = result.isDebug;
+      //console.log(authUser);
       if (authUser.access_token !== '') {
-        if (!isDebug) {
+        if (isDebug) {
           console.log('debug mode');
-          navigation.navigate('PlaceListScreen');
+          navigation.navigate('PlaceScreen');
         } else {
           navigation.navigate('HomeScreen');
         }
@@ -85,8 +87,12 @@ const LoginScreen = () => {
       <View style={styles.content}>
         <Text
           allowFontScaling={false}
-          style={{ fontFamily: 'Roboto-Bold', fontSize: hp(3.4) }}>
-          Instagram Repost
+          style={{
+            fontFamily: 'Roboto-Bold',
+            fontSize: hp(3.4),
+            color: 'black',
+          }}>
+          Travel Places
         </Text>
       </View>
       <View style={styles.login}>
