@@ -12,7 +12,7 @@ import InfoPostCard from '../components/InfoPostCard';
 import ScreenHeader from '../components/ScreenHeader';
 import i18next from 'i18next';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParams } from '../../App';
+import { RootStackParams } from '../navigation/StackNavigation';
 import Loading from '../components/Loading';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';

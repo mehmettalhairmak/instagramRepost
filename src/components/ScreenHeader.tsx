@@ -1,56 +1,43 @@
-import React, { useContext } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, Alert } from 'react-native';
+import React from 'react';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import {
   heightPercentageToDP as hp,
   widthPercentageToDP as wp,
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import { useNavigation } from '@react-navigation/native';
 import CookieManager from '@react-native-cookies/cookies';
-import { AuthContext } from '../context/AuthContextProvider';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParams } from '../../App';
+import { RootStackParams } from '../navigation/StackNavigation';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useAppDispatch } from '../hooks';
+import { setAuthUser } from '../redux/slices/authUser/authUserSlice';
 
 interface ScreenHeaderProps {
   title: string;
   isBackTrue?: boolean;
-  deleteUser?: boolean;
+  favoritePlace?: boolean;
+  favoriteProcess?: ()=>void;
 }
 
 const ScreenHeader: React.FC<ScreenHeaderProps> = ({
   title,
   isBackTrue = false,
-  deleteUser = false,
+  favoritePlace = false,
+  favoriteProcess,
 }) => {
+  const dispatch = useAppDispatch();
   const navigation =
     useNavigation<NativeStackNavigationProp<RootStackParams>>();
-  const { authContext } = useContext(AuthContext);
 
   const signOut = async () => {
     await AsyncStorage.removeItem('@currentUser');
     CookieManager.clearAll(true).then(res => {
-      authContext.creditUpdate({ payload: null });
+      dispatch(setAuthUser({ access_token: '', user_id: '' }));
       navigation.navigate('LoginScreen');
     });
-  };
-
-  const deleteAccount = () => {
-    Alert.alert('Delete Account', 'Are you sure want to delete account?', [
-      { text: 'NO' },
-      {
-        text: 'YES',
-        onPress: async () => {
-          await AsyncStorage.removeItem('@currentUser');
-          CookieManager.clearAll(true).then(res => {
-            authContext.creditUpdate({ payload: null });
-            navigation.navigate('LoginScreen');
-          });
-        },
-      },
-    ]);
   };
 
   return (
@@ -64,11 +51,6 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
           <TouchableOpacity
             onPress={() => navigation.canGoBack() && navigation.goBack()}>
             <Ionicons name="chevron-back-sharp" size={hp(4.4)} />
-          </TouchableOpacity>
-        )}
-        {deleteUser && (
-          <TouchableOpacity onPress={deleteAccount}>
-            <AntDesign name="deleteuser" size={hp(4.4)} color="red" />
           </TouchableOpacity>
         )}
       </View>
@@ -87,6 +69,12 @@ const ScreenHeader: React.FC<ScreenHeaderProps> = ({
         {!isBackTrue && (
           <TouchableOpacity onPress={signOut}>
             <MaterialCommunityIcons name="logout" size={hp(4.4)} />
+          </TouchableOpacity>
+        )}
+        {favoritePlace && (
+          <TouchableOpacity onPress={favoriteProcess}>
+            <MaterialIcons name="favorite-outline" size={hp(4)} />
+            
           </TouchableOpacity>
         )}
       </View>
